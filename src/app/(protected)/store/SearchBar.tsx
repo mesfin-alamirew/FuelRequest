@@ -35,7 +35,7 @@ export default function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSearch} className="flex gap-2 items-center mb-6">
+    <form onSubmit={handleSearch} className="flex gap-2 items-center ">
       <input
         type="text"
         placeholder="Search by request number..."

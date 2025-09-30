@@ -14,6 +14,7 @@ import StatusFilter from '@/components/ui/StatusFilter'; // Import the new Statu
 import ApproveRequestForm from '@/components/ApproveRequestForm';
 import PaginationControls from '@/components/ui/PaginationControls';
 import { getAuthSession } from '@/lib/auth';
+import Link from 'next/link';
 
 const prisma = new PrismaClient();
 const ITEMS_PER_PAGE = 10;
@@ -87,9 +88,9 @@ export default async function StorePage({
   const totalPages = Math.ceil(totalRequests / ITEMS_PER_PAGE);
 
   return (
-    <main className="p-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Store Attendant Dashboard</h1>
-      <div className="flex justify-between items-center mb-6">
+    <main className="p-8 max-w-6xl mx-auto text-sm">
+      <h1 className="text-2xl font-bold mb-6">Store Attendant Dashboard</h1>
+      <div className="flex gap-10  justify-between items-center mb-6">
         <SearchBar />
         <StatusFilter initialStatus={statusQuery || ''} />
       </div>
@@ -99,7 +100,7 @@ export default async function StorePage({
       {pendingRequests.length === 0 ? (
         <p>No pending fuel requests found.</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto text-sm">
           <table className="min-w-full bg-white border border-gray-200">
             <thead>
               <tr className="bg-gray-100">
