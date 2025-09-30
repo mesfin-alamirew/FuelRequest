@@ -715,3 +715,74 @@ export async function deleteVehicle(vehicleId: number) {
     throw new Error('Failed to delete vehicle.');
   }
 }
+
+export async function getPendingFuelRequestsAdmin() {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  return await prisma.fuelRequest.findMany({
+    where: { status: 'PENDING_ADMIN' },
+    include: {
+      focalPerson: true,
+      vehicle: true,
+    },
+  });
+}
+
+// Define ActionState type to be used by server actions
+type ActionState = {
+  message?: string;
+  error?: boolean;
+};
+
+export async function approveRequest(
+  initialState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    return { message: 'Unauthorized', error: true };
+  }
+  const requestId = parseInt(formData.get('requestId') as string, 10);
+
+  try {
+    await prisma.fuelRequest.update({
+      where: { id: requestId },
+      data: {
+        status: 'PENDING_STORE',
+        approvedById: parseInt(session.id),
+        approvedAt: new Date(),
+      },
+    });
+    revalidatePath('/admin/requests');
+    revalidatePath('/store-attendant/requests');
+    return { message: `Request ${requestId} approved successfully.` };
+  } catch (error) {
+    return { message: `Failed to approve request ${requestId}.`, error: true };
+  }
+}
+
+export async function rejectRequest(
+  initialState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    return { message: 'Unauthorized', error: true };
+  }
+  const requestId = parseInt(formData.get('requestId') as string, 10);
+
+  try {
+    await prisma.fuelRequest.update({
+      where: { id: requestId },
+      data: { status: 'CANCELED' },
+    });
+    revalidatePath('/admin/requests');
+    revalidatePath('/dashboard');
+    return { message: `Request ${requestId} rejected.`, error: true };
+  } catch (error) {
+    return { message: `Failed to reject request ${requestId}.`, error: true };
+  }
+}

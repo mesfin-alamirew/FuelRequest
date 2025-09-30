@@ -174,7 +174,7 @@ export async function createFuelRequest(
           quantity,
           fuelType: vehicle.fuelType,
           totalLiters,
-          status: RequestStatusEnum.PENDING_STORE,
+          status: RequestStatusEnum.PENDING_ADMIN,
           remark,
         },
       });

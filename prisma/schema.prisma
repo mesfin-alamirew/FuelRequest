@@ -63,6 +63,7 @@ model User {
   fuelRequests  FuelRequest[]
   deliveries    CouponDelivery[]
   balanceTransactions BalanceTransaction[]
+  approvedRequests FuelRequest[] @relation("ApprovedRequests") 
 }
 
 
@@ -84,11 +85,15 @@ model FuelRequest {
   quantity           Int                 // The number of coupons required
   fuelType           FuelTypeEnum
   totalLiters        Float
-  status             RequestStatusEnum @default(PENDING_STORE)
+  status             RequestStatusEnum @default(PENDING_ADMIN)
   couponDeliveries   CouponDelivery[]  // One-to-many relationship with CouponDelivery
   createdAt          DateTime          @default(now())
   remark            String?
+  approvedById       Int?
+  approvedBy         User?             @relation("ApprovedRequests", fields: [approvedById], references: [id])
+  approvedAt         DateTime?
 }
+
 
 model CouponDelivery {
   id            Int           @id @default(autoincrement())
@@ -143,6 +148,7 @@ enum RoleEnum {
 }
 
 enum RequestStatusEnum {
+  PENDING_ADMIN
   PENDING_STORE
   COMPLETED
   CANCELED
