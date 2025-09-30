@@ -9,19 +9,30 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@azure/msal-browser": "^4.24.0",
+    "@azure/msal-react": "^3.0.20",
+    "@prisma/client": "^6.16.2",
+    "jose": "^6.1.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "jsonwebtoken": "^9.0.2",
+    "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.4"
+    "react-toastify": "^11.0.5",
+    "use-debounce": "^10.0.6",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
-    "@eslint/eslintrc": "^3"
+    "prisma": "^6.16.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }

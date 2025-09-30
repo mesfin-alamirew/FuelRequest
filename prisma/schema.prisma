@@ -1,0 +1,150 @@
+
+generator client {
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// FuelType and price data can be managed here
+model FuelPrice {
+  id        Int      @id @default(autoincrement())
+  type      String   @unique
+  price     Float
+  updatedAt DateTime @updatedAt
+}
+model Coupon {
+  id            Int         @id @default(autoincrement())
+  couponNumber  String      @unique // Unique number on the physical coupon
+  priceValue    Float       // The monetary value of the coupon
+  isDelivered   Boolean     @default(false)
+  delivery      CouponDelivery?
+}
+model Department {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  // drivers   Driver[]
+  focalPeople User[]
+  requests      FuelRequest[]
+}
+model Driver {
+  id            Int           @id @default(autoincrement())
+  name          String
+  // departmentId  Int
+  // department    Department    @relation(fields: [departmentId], references: [id])
+  requests      FuelRequest[]
+}
+model Vehicle {
+  id         Int              @id @default(autoincrement())
+  plate      String           @unique
+  fuelType   FuelTypeEnum
+  requests   FuelRequest[]
+  lastOdometer Int
+}
+
+model Balance {
+  id            Int     @id @default(1) // Singleton model
+  currentAmount Float
+  minThreshold  Float   // For low balance notifications
+   balanceTransactions BalanceTransaction[]
+}
+model User {
+  id            Int           @id @default(autoincrement())
+  email         String        @unique
+  
+  name          String
+  role          RoleEnum
+  departmentId  Int?          // Store attendant doesn't need a department
+  department    Department?   @relation(fields: [departmentId], references: [id])
+  fuelRequests  FuelRequest[]
+  deliveries    CouponDelivery[]
+  balanceTransactions BalanceTransaction[]
+}
+
+
+
+model FuelRequest {
+  id                 Int               @id @default(autoincrement())
+  requestNumber      String            @unique
+  vehicleId          Int
+  vehicle            Vehicle           @relation(fields: [vehicleId], references: [id])
+  driverId           Int
+  driver             Driver            @relation(fields: [driverId], references: [id])
+  departmentId       Int
+  department         Department        @relation(fields: [departmentId], references: [id])
+  focalPersonId      Int
+  focalPerson        User              @relation(fields: [focalPersonId], references: [id])
+  currentOdometer    Int
+  previousOdometer   Int
+  calculatedDifference Int
+  quantity           Int                 // The number of coupons required
+  fuelType           FuelTypeEnum
+  totalLiters        Float
+  status             RequestStatusEnum @default(PENDING_STORE)
+  couponDeliveries   CouponDelivery[]  // One-to-many relationship with CouponDelivery
+  createdAt          DateTime          @default(now())
+  remark            String?
+}
+
+model CouponDelivery {
+  id            Int           @id @default(autoincrement())
+  couponId      Int           @unique
+  coupon        Coupon        @relation(fields: [couponId], references: [id])
+  requestId     Int           
+  fuelRequest   FuelRequest   @relation(fields: [requestId], references: [id])
+  deliveredById Int
+  deliveredBy   User          @relation(fields: [deliveredById], references: [id])
+  deliveredAt   DateTime      @default(now())
+  
+  balanceTransaction BalanceTransaction?
+}
+model BalanceTransaction {
+  id        Int                    @id @default(autoincrement())
+  type      BalanceTransactionType
+  amount    Float
+  balanceId Int
+  balance   Balance                @relation(fields: [balanceId], references: [id])
+  userId    Int
+  user      User                   @relation(fields: [userId], references: [id])
+  createdAt DateTime               @default(now())
+
+  // Add the relation fields for CouponDelivery
+  couponDeliveryId Int?           @unique
+  couponDelivery   CouponDelivery? @relation(fields: [couponDeliveryId], references: [id])
+}
+model CouponValue {
+  id      Int          @id @default(autoincrement()) 
+  value   Int 
+}
+model StartingNumber{
+  id     Int   @id @default(autoincrement())
+  value  Int
+}
+enum BalanceTransactionType {
+  TOP_UP
+  COUPON_DEDUCTION
+  // Other types as needed
+}
+
+enum FuelTypeEnum {
+  DIESEL
+  GASOLINE
+}
+
+enum RoleEnum {
+  USER
+  TRANSPORT_FOCAL
+  STORE_ATTENDANT
+  ADMIN
+}
+
+enum RequestStatusEnum {
+  PENDING_STORE
+  COMPLETED
+  CANCELED
+}
+
