@@ -1,0 +1,88 @@
+'use client';
+
+import { useActionState, useState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { toast } from 'react-toastify';
+import { createCoupon } from '@/lib/actions/admin';
+import { Input } from '@/components/ui/Input';
+
+type FormState = {
+  success?: boolean;
+  error?: string;
+} | null;
+
+export default function AddCouponForm({
+  onCouponAdded,
+}: {
+  onCouponAdded: () => Promise<void>;
+}) {
+  // <-- Change: Prop type is now `async`
+  const [state, formAction] = useActionState<FormState, FormData>(
+    async (_previousState: FormState, formData: FormData) => {
+      try {
+        await createCoupon(formData);
+        toast.success('Coupon created successfully!');
+        await onCouponAdded(); // <-- This now correctly awaits an async function
+        return { success: true };
+      } catch (error: unknown) {
+        let errorMessage = 'Failed to create coupon.';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        toast.error(errorMessage);
+        return { error: errorMessage };
+      }
+    },
+    null
+  );
+
+  const { pending } = useFormStatus();
+
+  return (
+    <form
+      action={formAction}
+      className="mt-8 space-y-4 border p-4 border-gray-200 rounded-2xl"
+    >
+      {state?.error && (
+        <div className="p-4 rounded-md bg-red-100 text-red-700">
+          {state.error}
+        </div>
+      )}
+      <h2 className="text-xl font-semibold text-gray-800">Add New Coupon</h2>
+      <div className="flex gap-4">
+        <div className="flex-1">
+          <label htmlFor="couponNumber" className="sr-only">
+            Coupon Number
+          </label>
+          <Input
+            id="couponNumber"
+            name="couponNumber"
+            placeholder="Coupon Number"
+            required
+          />
+        </div>
+        <div className="flex-1">
+          <label htmlFor="priceValue" className="sr-only">
+            Price Value
+          </label>
+          <Input
+            id="priceValue"
+            name="priceValue"
+            type="number"
+            placeholder="Price Value"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={pending}
+          className={`px-6 py-2 text-sm font-medium rounded-md text-white transition-colors ${
+            pending ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
+          }`}
+        >
+          {pending ? 'Adding...' : 'Add Coupon'}
+        </button>
+      </div>
+    </form>
+  );
+}
