@@ -36,17 +36,29 @@ const createRequestSchema = z.object({
   quantity: z.coerce.number().int().min(1, 'Quantity must be at least 1.'),
   remark: z.string(),
 });
-// Define the shape of the state object for useActionState
-export interface FormState {
-  success?: boolean;
+
+export type FormAndActionState = {
   message?: string;
+  error?: boolean; // For general errors like unauthorized access
   errors?: {
+    // For specific validation errors
     currentOdometer?: string[];
     quantity?: string[];
     remark?: string[];
   };
-}
-export type ActionState = FormState;
+};
+
+// Define the shape of the state object for useActionState
+// export interface FormState {
+//   success?: boolean;
+//   message?: string;
+//   errors?: {
+//     currentOdometer?: string[];
+//     quantity?: string[];
+//     remark?: string[];
+//   };
+// }
+
 // Zod schema for updating request status
 const updateRequestStatusSchema = z.object({
   requestId: z.coerce.number().int({ message: 'Request ID must be a number.' }),
@@ -214,7 +226,7 @@ export async function createFuelRequest(
   }
 }
 export async function updateRequestStatus(
-  prevState: FormState,
+  prevState: FormAndActionState,
   formData: FormData
 ) {
   const session = await getAuthSession();
@@ -385,9 +397,9 @@ export async function getFuelRequestById(requestId: number) {
 }
 export async function updateFuelRequest(
   requestId: number,
-  initialState: ActionState,
+  initialState: FormAndActionState,
   formData: FormData
-): Promise<ActionState> {
+): Promise<FormAndActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'TRANSPORT_FOCAL') {
     return { message: 'Unauthorized action.', errors: {} };
@@ -457,19 +469,18 @@ export async function updateFuelRequest(
 
     // return { message: 'Request updated successfully.', error: false };
   } catch (error) {
-    console.error('Failed to update fuel request:', error);
-    return { message: 'Failed to update request.', errors: {} };
+    return { message: 'Failed to update request.', error: true };
   }
   revalidatePath(`/transport/my-requests`);
   redirect(`/transport/my-requests`);
 }
 export async function deleteFuelRequest(
-  initialState: ActionState,
+  initialState: FormAndActionState,
   formData: FormData
-): Promise<ActionState> {
+): Promise<FormAndActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'TRANSPORT_FOCAL') {
-    return { message: 'Unauthorized', errors: {} };
+    return { message: 'Unauthorized', error: true };
   }
 
   // Retrieve the requestId from the formData object
@@ -481,7 +492,7 @@ export async function deleteFuelRequest(
   });
 
   if (!existingRequest || existingRequest.status !== 'REJECTED') {
-    return { message: 'Cannot delete this request.', errors: {} };
+    return { message: 'Cannot delete this request.', error: true };
   }
 
   try {
@@ -489,10 +500,10 @@ export async function deleteFuelRequest(
       where: { id: requestId },
     });
     revalidatePath('/transport-focal/requests');
-    return { message: 'Request deleted successfully.', errors: {} };
+    return { message: 'Request deleted successfully.', error: false };
   } catch (error) {
     console.error('Failed to delete fuel request:', error);
-    return { message: 'Failed to delete request.', errors: {} };
+    return { message: 'Failed to delete request.', error: true };
   }
 }
 export async function getFocalPersonRequests() {

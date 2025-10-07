@@ -10,8 +10,8 @@ import {
 import { ChangeEvent, useActionState, useState, useEffect } from 'react';
 import {
   createFuelRequest,
+  FormAndActionState,
   updateFuelRequest,
-  FormState,
 } from '@/lib/actions/requests';
 
 interface VehicleRequestFormProps {
@@ -23,7 +23,7 @@ interface VehicleRequestFormProps {
   request?: FuelRequest;
 }
 
-const initialState: FormState = {
+const initialState: FormAndActionState = {
   message: '',
   errors: {},
 };
