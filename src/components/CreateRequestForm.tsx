@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useActionState } from 'react';
-import { createFuelRequest, fetchDrivers } from '@/lib/actions/requests';
+import {
+  createFuelRequest,
+  fetchDrivers,
+  FormAndActionState,
+} from '@/lib/actions/requests';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { toast } from 'react-toastify';
@@ -13,36 +17,15 @@ type FormState = {
   message: string;
   error?: string;
 } | null;
-const initialState: FormState = {
-  success: false,
+const initialState: FormAndActionState = {
   message: '',
-  error: '',
+  errors: {},
 };
 export default function CreateRequestForm({ drivers }: { drivers: Driver[] }) {
-  // <-- Pass drivers as a prop
-  // const [state, formAction, isPending] = useActionState<FormState, FormData>(
-  //   async (_previousState: FormState, formData: FormData) => {
-  //     try {
-  //       await createFuelRequest(formData);
-  //       toast.success('Fuel request submitted successfully!');
-  //       return { success: true };
-  //     } catch (error: unknown) {
-  //       let errorMessage = 'Failed to submit request.';
-  //       if (error instanceof Error) {
-  //         errorMessage = error.message;
-  //       }
-  //       toast.error(errorMessage);
-  //       return { error: errorMessage };
-  //     }
-  //   },
-  //   null
-  // );
-
-  // const { pending } = useFormStatus();
-  const [state, formAction, pending] = useActionState<FormState, FormData>(
-    createFuelRequest,
-    initialState
-  );
+  const [state, formAction, pending] = useActionState<
+    FormAndActionState,
+    FormData
+  >(createFuelRequest, initialState);
   return (
     <form action={formAction} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
