@@ -15,6 +15,7 @@ import { revalidatePath } from 'next/cache';
 import { getAuthSession } from '@/lib/auth';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { redirect } from 'next/navigation';
+import { promises } from 'node:dns';
 
 const prisma = new PrismaClient();
 
@@ -117,7 +118,10 @@ export async function exportReportToCsv(
     return { error: `Failed to export report: ${errorMessage}` };
   }
 }
-export async function topUpBalance(prevState: FormState, formData: FormData) {
+export async function topUpBalance(
+  prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'ADMIN') {
     return { message: 'Unauthorized.', errors: {} };
