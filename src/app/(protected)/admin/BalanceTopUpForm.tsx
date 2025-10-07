@@ -30,8 +30,8 @@ export default function BalanceTopUpForm() {
           className="border p-2 rounded-md"
           required
         />
-        {state?.errors?.amount?.length > 0 && (
-          <p className="text-red-500 text-sm mt-1">{state.errors.amount[0]}</p>
+        {(state?.errors?.amount?.length ?? 0) > 0 && (
+          <p className="text-red-500 text-sm mt-1">{state?.errors?.amount}</p>
         )}
       </div>
       <button
