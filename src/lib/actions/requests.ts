@@ -37,15 +37,16 @@ const createRequestSchema = z.object({
   remark: z.string(),
 });
 // Define the shape of the state object for useActionState
-export type FormState = {
+export interface FormState {
   success?: boolean;
-  message: string;
+  message?: string;
   errors?: {
     currentOdometer?: string[];
     quantity?: string[];
     remark?: string[];
   };
-};
+}
+export type ActionState = FormState;
 // Zod schema for updating request status
 const updateRequestStatusSchema = z.object({
   requestId: z.coerce.number().int({ message: 'Request ID must be a number.' }),
@@ -56,11 +57,11 @@ const updateRequestStatusSchema = z.object({
 //   errors: {},
 // };
 // Define ActionState type to be used by server actions
-type ActionState = {
-  success?: boolean;
-  message?: string;
-  error?: boolean;
-};
+// type ActionState = {
+//   success?: boolean;
+//   message?: string;
+//   error?: boolean;
+// };
 // Function to safely redirect with existing filters and new toast
 function redirectWithToast(
   path: string,
@@ -389,7 +390,7 @@ export async function updateFuelRequest(
 ): Promise<ActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'TRANSPORT_FOCAL') {
-    return { message: 'Unauthorized action.', error: true };
+    return { message: 'Unauthorized action.', errors: {} };
   }
 
   const data = Object.fromEntries(formData.entries());
@@ -408,7 +409,7 @@ export async function updateFuelRequest(
     isNaN(driverId) ||
     isNaN(departmentId)
   ) {
-    return { message: 'Invalid input. Please check your fields.', error: true };
+    return { message: 'Invalid input. Please check your fields.', errors: {} };
   }
 
   const existingRequest = await prisma.fuelRequest.findUnique({
@@ -418,7 +419,7 @@ export async function updateFuelRequest(
   if (!existingRequest || existingRequest.status !== 'REJECTED') {
     return {
       message: 'Request not found or not in a valid state for editing.',
-      error: true,
+      errors: {},
     };
   }
 
@@ -427,7 +428,7 @@ export async function updateFuelRequest(
 
   const vehicle = await prisma.vehicle.findUnique({ where: { id: vehicleId } });
   if (!vehicle) {
-    return { message: 'Vehicle not found.', error: true };
+    return { message: 'Vehicle not found.', errors: {} };
   }
   const fuelPrice = await prisma.fuelPrice.findUnique({
     where: { type: vehicle.fuelType },
@@ -457,7 +458,7 @@ export async function updateFuelRequest(
     // return { message: 'Request updated successfully.', error: false };
   } catch (error) {
     console.error('Failed to update fuel request:', error);
-    return { message: 'Failed to update request.', error: true };
+    return { message: 'Failed to update request.', errors: {} };
   }
   revalidatePath(`/transport/my-requests`);
   redirect(`/transport/my-requests`);
@@ -468,7 +469,7 @@ export async function deleteFuelRequest(
 ): Promise<ActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'TRANSPORT_FOCAL') {
-    return { message: 'Unauthorized', error: true };
+    return { message: 'Unauthorized', errors: {} };
   }
 
   // Retrieve the requestId from the formData object
@@ -480,7 +481,7 @@ export async function deleteFuelRequest(
   });
 
   if (!existingRequest || existingRequest.status !== 'REJECTED') {
-    return { message: 'Cannot delete this request.', error: true };
+    return { message: 'Cannot delete this request.', errors: {} };
   }
 
   try {
@@ -488,10 +489,10 @@ export async function deleteFuelRequest(
       where: { id: requestId },
     });
     revalidatePath('/transport-focal/requests');
-    return { message: 'Request deleted successfully.', error: false };
+    return { message: 'Request deleted successfully.', errors: {} };
   } catch (error) {
     console.error('Failed to delete fuel request:', error);
-    return { message: 'Failed to delete request.', error: true };
+    return { message: 'Failed to delete request.', errors: {} };
   }
 }
 export async function getFocalPersonRequests() {

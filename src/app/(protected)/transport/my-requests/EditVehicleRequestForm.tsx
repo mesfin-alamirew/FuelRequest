@@ -195,11 +195,12 @@ export default function VehicleRequestForm({
             onChange={changeHandler}
             value={formInputs.currentOdometer || ''}
           />
-          {state?.errors?.currentOdometer?.length > 0 && (
-            <p className="text-red-500 text-sm mt-1">
-              {state.errors.currentOdometer}
-            </p>
-          )}
+          {state.errors?.currentOdometer &&
+            state.errors.currentOdometer.length > 0 && (
+              <p className="text-red-500 text-sm mt-1">
+                {state.errors.currentOdometer}
+              </p>
+            )}
         </div>
         <div className="flex flex-col">
           <label className="mb-1">OM Difference:</label>
@@ -221,7 +222,7 @@ export default function VehicleRequestForm({
             required
             value={formInputs.quantity || ''}
           />
-          {state?.errors?.quantity?.length > 0 && (
+          {state.errors?.quantity && state.errors.quantity.length > 0 && (
             <p className="text-red-500 text-sm mt-1">{state.errors.quantity}</p>
           )}
         </div>
@@ -274,7 +275,7 @@ export default function VehicleRequestForm({
           className="border p-2 rounded-md w-full"
           defaultValue={request?.remark || ''}
         />
-        {state?.errors?.remark?.length > 0 && (
+        {state.errors?.remark && state.errors.remark.length > 0 && (
           <p className="text-red-500 text-sm mt-1">{state.errors.remark}</p>
         )}
       </div>
