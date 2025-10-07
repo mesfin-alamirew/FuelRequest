@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
 
   // Read the session cookie directly from the request
   const sessionCookie = request.cookies.get('app_session');
-  console.log('VVV', sessionCookie);
+
   const isAuthenticated = !!sessionCookie;
 
   // Protect all /admin routes

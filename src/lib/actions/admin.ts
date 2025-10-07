@@ -1,8 +1,8 @@
 // src/app/(protected)/admin/actions.ts
 'use server';
-
-import { z } from 'zod';
 import { Parser } from 'json2csv';
+import { z } from 'zod';
+
 import {
   PrismaClient,
   Prisma,
@@ -38,7 +38,11 @@ export type formState = {
   message: string;
   errors: Record<string, string[]>;
 };
-
+// Define ActionState type to be used by server actions
+type ActionState = {
+  message?: string;
+  error?: boolean;
+};
 // Define a schema for the export filters, which are strings from searchParams
 const exportFiltersSchema = z.object({
   requestNumber: z.string().optional(),
@@ -731,12 +735,6 @@ export async function getPendingFuelRequestsAdmin() {
   });
 }
 
-// Define ActionState type to be used by server actions
-type ActionState = {
-  message?: string;
-  error?: boolean;
-};
-
 export async function approveRequest(
   initialState: ActionState,
   formData: FormData
@@ -765,7 +763,7 @@ export async function approveRequest(
 }
 
 export async function rejectRequest(
-  initialState: ActionState,
+  initialState: unknown,
   formData: FormData
 ): Promise<ActionState> {
   const session = await getAuthSession();
@@ -777,10 +775,10 @@ export async function rejectRequest(
   try {
     await prisma.fuelRequest.update({
       where: { id: requestId },
-      data: { status: 'CANCELED' },
+      data: { status: 'REJECTED' },
     });
     revalidatePath('/admin/requests');
-    revalidatePath('/dashboard');
+    revalidatePath('/dashboard'); // Assuming dashboard shows focal person's requests
     return { message: `Request ${requestId} rejected.`, error: true };
   } catch (error) {
     return { message: `Failed to reject request ${requestId}.`, error: true };

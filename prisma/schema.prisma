@@ -152,5 +152,6 @@ enum RequestStatusEnum {
   PENDING_STORE
   COMPLETED
   CANCELED
+  REJECTED 
 }
 

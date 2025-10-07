@@ -1,67 +1,158 @@
-// src/app/(protected)/transport/VehicleRequestForm.tsx
 'use client';
 
-import { Vehicle, Driver, Department } from '@prisma/client';
-import { ChangeEvent, useActionState, useState } from 'react';
-import { createFuelRequest, FormState } from '@/lib/actions/requests';
+import {
+  Vehicle,
+  Driver,
+  Department,
+  FuelRequest,
+  FuelTypeEnum,
+} from '@prisma/client';
+import { ChangeEvent, useActionState, useState, useEffect } from 'react';
+import {
+  createFuelRequest,
+  updateFuelRequest,
+  FormState,
+} from '@/lib/actions/requests';
 
-const initialState: FormState = {
-  success: false,
-  message: '',
-  errors: {},
-};
-interface FormData {
-  currentOdometer: number;
-  lastOdometer: number;
-  difference: number;
-  quantity: number;
-}
-export default function VehicleRequestForm({
-  vehicle,
-  drivers,
-  departments,
-  liter,
-  couponValue,
-}: {
-  vehicle: Vehicle;
+interface VehicleRequestFormProps {
+  vehicles: Vehicle[];
   drivers: Driver[];
   departments: Department[];
   liter: number;
   couponValue: number;
-}) {
-  const [state, formAction, isPending] = useActionState(
-    createFuelRequest,
-    initialState
-  );
+  request?: FuelRequest;
+}
 
-  const [inputs, setInputs] = useState<FormData>(Object);
+const initialState: FormState = {
+  message: '',
+  errors: {},
+};
 
-  const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+export default function VehicleRequestForm({
+  vehicles,
+  drivers,
+  departments,
+  liter,
+  couponValue,
+  request,
+}: VehicleRequestFormProps) {
+  const isEditMode = !!request;
+  const action = isEditMode
+    ? updateFuelRequest.bind(null, request.id)
+    : createFuelRequest;
+
+  const [state, formAction, isPending] = useActionState(action, initialState);
+
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(() => {
+    return isEditMode
+      ? vehicles.find((v) => v.id === request.vehicleId) || null
+      : vehicles?.[0] || null;
+  });
+
+  const [formInputs, setFormInputs] = useState({
+    vehicleId: request?.vehicleId || vehicles?.[0]?.id || 0,
+    currentOdometer: 0, // Initialized in useEffect
+    lastOdometer: 0, // Initialized in useEffect
+    quantity: request?.quantity || 0,
+    fuelType:
+      request?.fuelType ||
+      vehicles?.[0]?.fuelType ||
+      ('DIESEL' as FuelTypeEnum),
+  });
+
+  useEffect(() => {
+    if (selectedVehicle) {
+      setFormInputs((prev) => ({
+        ...prev,
+        lastOdometer: selectedVehicle.lastOdometer,
+        fuelType: selectedVehicle.fuelType,
+      }));
+    }
+  }, [selectedVehicle]);
+
+  useEffect(() => {
+    if (isEditMode) {
+      setFormInputs((prev) => ({
+        ...prev,
+        currentOdometer: request.currentOdometer,
+      }));
+    }
+  }, [isEditMode, request]);
+
+  const changeHandler = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setInputs((values) => ({ ...values, [name]: value }));
-    // setCurrentOM(parseInt(e.target.value));
+
+    if (name === 'vehicleId') {
+      const newVehicleId = parseInt(value, 10);
+      const newVehicle = vehicles.find((v) => v.id === newVehicleId) || null;
+      setSelectedVehicle(newVehicle);
+
+      setFormInputs((prev) => ({
+        ...prev,
+        [name]: newVehicleId,
+        // Set current odometer to last odometer of new vehicle
+        currentOdometer: newVehicle?.lastOdometer || 0,
+      }));
+    } else {
+      setFormInputs((prev) => ({ ...prev, [name]: value }));
+    }
   };
+
+  const odometerDifference =
+    (formInputs.currentOdometer || 0) - (formInputs.lastOdometer || 0);
 
   return (
     <form action={formAction} className="mt-8 p-6 border rounded-lg bg-gray-50">
       <h2 className="text-sm font-semibold mb-4 text-green-600">
-        Create Fuel Request for {vehicle.plate}
+        {isEditMode
+          ? `Edit Fuel Request #${request?.requestNumber}`
+          : `Create Fuel Request for ${selectedVehicle?.plate}`}
       </h2>
 
-      {/* Add a hidden input to pass the vehicle plate */}
-      <input type="hidden" name="plate" value={vehicle.plate} />
+      {isEditMode && (
+        <input type="hidden" name="requestId" value={request.id} />
+      )}
+      {isEditMode && (
+        <input
+          type="hidden"
+          name="previousOdometer"
+          value={request.previousOdometer}
+        />
+      )}
+      <input type="hidden" name="fuelType" value={selectedVehicle?.fuelType} />
+
       {state.message && (
         <div className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50">
           {state.message}
         </div>
       )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="flex flex-col">
+          <label className="mb-1">Vehicle:</label>
+          <select
+            name="vehicleId"
+            className="border p-2 rounded-md"
+            required
+            onChange={changeHandler}
+            value={formInputs.vehicleId}
+          >
+            {vehicles.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.plate}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="flex flex-col">
           <label className="mb-1">Department:</label>
           <select
             name="departmentId"
             className="border p-2 rounded-md"
             required
+            defaultValue={request?.departmentId}
           >
             {departments.map((dpt) => (
               <option key={dpt.id} value={dpt.id}>
@@ -72,7 +163,12 @@ export default function VehicleRequestForm({
         </div>
         <div className="flex flex-col">
           <label className="mb-1">Driver:</label>
-          <select name="driverId" className="border p-2 rounded-md" required>
+          <select
+            name="driverId"
+            className="border p-2 rounded-md"
+            required
+            defaultValue={request?.driverId}
+          >
             {drivers.map((driver) => (
               <option key={driver.id} value={driver.id}>
                 {driver.name}
@@ -83,9 +179,8 @@ export default function VehicleRequestForm({
         <div className="flex flex-col">
           <label className="mb-1">Last Odometer Reading:</label>
           <input
-            onChange={(e) => changeHandler(e)}
             type="text"
-            value={vehicle.lastOdometer}
+            value={formInputs.lastOdometer || ''}
             disabled
             className="border p-2 rounded-md bg-gray-200"
           />
@@ -97,7 +192,8 @@ export default function VehicleRequestForm({
             name="currentOdometer"
             className="border p-2 rounded-md"
             required
-            onChange={(e) => changeHandler(e)}
+            onChange={changeHandler}
+            value={formInputs.currentOdometer || ''}
           />
           {state?.errors?.currentOdometer?.length > 0 && (
             <p className="text-red-500 text-sm mt-1">
@@ -110,12 +206,8 @@ export default function VehicleRequestForm({
           <input
             type="number"
             name="difference"
-            onChange={(e) => changeHandler(e)}
             className="border p-2 rounded-md bg-gray-200"
-            value={(inputs.currentOdometer !== undefined
-              ? inputs.currentOdometer - vehicle.lastOdometer
-              : 0
-            ).toString()}
+            value={odometerDifference}
             disabled
           />
         </div>
@@ -125,14 +217,14 @@ export default function VehicleRequestForm({
             type="number"
             name="quantity"
             className="border p-2 rounded-md"
-            onChange={(e) => changeHandler(e)}
+            onChange={changeHandler}
             required
+            value={formInputs.quantity || ''}
           />
           {state?.errors?.quantity?.length > 0 && (
             <p className="text-red-500 text-sm mt-1">{state.errors.quantity}</p>
           )}
         </div>
-
         <div className="flex flex-col">
           <label className="mb-1">Coupon Value:</label>
           <input
@@ -149,7 +241,7 @@ export default function VehicleRequestForm({
             type="number"
             name="TotalCouponValue"
             className="border p-2 rounded-md bg-gray-200"
-            value={(couponValue * inputs.quantity).toString()}
+            value={couponValue * formInputs.quantity}
             disabled
           />
         </div>
@@ -169,10 +261,7 @@ export default function VehicleRequestForm({
             type="text"
             name="liters"
             className="border p-2 rounded-md bg-gray-200"
-            value={(inputs.quantity !== undefined
-              ? liter * inputs.quantity
-              : 0
-            ).toString()}
+            value={liter * formInputs.quantity}
             disabled
           />
         </div>
@@ -182,26 +271,36 @@ export default function VehicleRequestForm({
         <textarea
           name="remark"
           placeholder="Put some remark...."
-          className="border p-2 rounded-md  w-full"
+          className="border p-2 rounded-md w-full"
+          defaultValue={request?.remark || ''}
         />
         {state?.errors?.remark?.length > 0 && (
           <p className="text-red-500 text-sm mt-1">{state.errors.remark}</p>
         )}
       </div>
-      <SubmitButton isPending={isPending} />
-      {/* {state?.message && <p className="text-red-500 mt-4">{state.message}</p>} */}
+      <SubmitButton isPending={isPending} isEditMode={isEditMode} />
     </form>
   );
 }
 
-function SubmitButton({ isPending }: { isPending: boolean }) {
+function SubmitButton({
+  isPending,
+  isEditMode,
+}: {
+  isPending: boolean;
+  isEditMode: boolean;
+}) {
   return (
     <button
       type="submit"
       disabled={isPending}
       className="bg-green-600 text-white p-2 rounded-md mt-6 w-full disabled:opacity-50"
     >
-      {isPending ? 'Creating Request...' : 'Submit Fuel Request'}
+      {isPending
+        ? 'Submitting...'
+        : isEditMode
+        ? 'Update Request'
+        : 'Submit Fuel Request'}
     </button>
   );
 }

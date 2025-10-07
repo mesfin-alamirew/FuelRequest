@@ -80,14 +80,24 @@ export default function Sidebar() {
             </li>
           )}
           {(session?.role as string) === 'ADMIN' && (
-            <li>
-              <Link
-                href="/admin"
-                className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-              >
-                Reports
-              </Link>
-            </li>
+            <>
+              <li>
+                <Link
+                  href="/admin/requests"
+                  className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+                >
+                  Pending Requests
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/admin"
+                  className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+                >
+                  Reports
+                </Link>
+              </li>
+            </>
           )}
         </ul>
       </nav>

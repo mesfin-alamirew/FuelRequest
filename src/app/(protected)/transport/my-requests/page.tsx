@@ -14,6 +14,7 @@ import Link from 'next/link';
 import PaginationControls from '@/components/ui/PaginationControls'; // New component
 import SearchBar from './SearchBar';
 import StatusFilter from '@/components/ui/StatusFilter';
+import DeleteRequestButton from './delete-request-button';
 
 const prisma = new PrismaClient();
 const ITEMS_PER_PAGE = 10;
@@ -121,11 +122,20 @@ export default async function MyRequestsPage({
                   <th className="py-2 px-4 border-b text-left">Quantity</th>
 
                   <th className="py-2 px-4 border-b text-left">Remark</th>
+                  <th
+                    scope="col"
+                    className="relative px-6 py-3 border-b text-left"
+                  >
+                    <span className="sr-only ">Actions</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {myRequests.map((request) => (
-                  <tr key={request.id} className="hover:bg-gray-50 border-b">
+                  <tr
+                    key={request.id}
+                    className="hover:bg-gray-50 border-b-gray-300 border-b"
+                  >
                     <td className="py-2 px-4">{request.requestNumber}</td>
                     <td className="py-2 px-4">{request.vehicle.plate}</td>
                     <td className="py-2 px-4">{request.driver.name}</td>
@@ -154,6 +164,20 @@ export default async function MyRequestsPage({
 
                     <td className="py-2 px-4">{request.quantity}</td>
                     <td className="py-2 px-4">{request.remark}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      {request.status === 'REJECTED' && (
+                        <div className="flex space-x-2">
+                          <Link
+                            href={`/transport/my-requests/${request.id}/edit`}
+                          >
+                            <button className="text-blue-600 hover:text-blue-900">
+                              Edit
+                            </button>
+                          </Link>
+                          <DeleteRequestButton requestId={request.id} />
+                        </div>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

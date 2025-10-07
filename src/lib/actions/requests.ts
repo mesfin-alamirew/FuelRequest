@@ -38,6 +38,7 @@ const createRequestSchema = z.object({
 });
 // Define the shape of the state object for useActionState
 export type FormState = {
+  success?: boolean;
   message: string;
   errors: Record<string, string[]>;
 };
@@ -49,6 +50,12 @@ const updateRequestStatusSchema = z.object({
 const initialState: FormState = {
   message: '',
   errors: {},
+};
+// Define ActionState type to be used by server actions
+type ActionState = {
+  success?: boolean;
+  message?: string;
+  error?: boolean;
 };
 // Function to safely redirect with existing filters and new toast
 function redirectWithToast(
@@ -121,6 +128,7 @@ export async function createFuelRequest(
 
   if (!validatedFields.success) {
     return {
+      success: false,
       message: 'Invalid form data.',
       errors: validatedFields.error.flatten().fieldErrors,
     };
@@ -340,120 +348,6 @@ export async function updateRequestStatus(
   }
 }
 
-// export async function updateRequestStatus(
-//   prevState: FormState,
-//   formData: FormData
-// ) {
-//   const session = await getAuthSession();
-//   if (!session || session.role !== 'STORE_ATTENDANT') {
-//     return { message: 'Unauthorized.', errors: {} };
-//   }
-
-//   const deliveredById = parseInt(session.id);
-//   if (isNaN(deliveredById)) {
-//     return { message: 'Invalid store attendant ID.', errors: {} };
-//   }
-
-//   const validatedFields = updateRequestStatusSchema.safeParse(
-//     Object.fromEntries(formData.entries())
-//   );
-
-//   if (!validatedFields.success) {
-//     return {
-//       message: 'Invalid form data.',
-//       errors: validatedFields.error.flatten().fieldErrors,
-//     };
-//   }
-
-//   const { requestId } = validatedFields.data;
-
-//   try {
-//     const updatedRequest = await prisma.$transaction(async (tx) => {
-//       const fuelRequest = await tx.fuelRequest.findUnique({
-//         where: { id: requestId },
-//         include: { couponDelivery: true },
-//       });
-
-//       if (!fuelRequest) {
-//         throw new Error('Fuel request not found.');
-//       }
-//       if (fuelRequest.couponDelivery) {
-//         throw new Error('Coupon already delivered for this request.');
-//       }
-
-//       const availableCoupon = await tx.coupon.findFirst({
-//         where: { isDelivered: false },
-//         orderBy: { id: 'asc' },
-//       });
-
-//       if (!availableCoupon) {
-//         throw new Error('No coupons available for delivery.');
-//       }
-
-//       const balance = await tx.balance.findUnique({
-//         where: { id: 1 },
-//       });
-
-//       if (!balance) {
-//         throw new Error('System balance record not found.');
-//       }
-
-//       if (balance.currentAmount < availableCoupon.priceValue) {
-//         throw new Error('Insufficient funds to issue coupon.');
-//       }
-
-//       const newCouponDelivery = await tx.couponDelivery.create({
-//         data: {
-//           couponId: availableCoupon.id,
-//           requestId: fuelRequest.id,
-//           deliveredById,
-//         },
-//       });
-
-//       await tx.balance.update({
-//         where: { id: 1 },
-//         data: {
-//           currentAmount: {
-//             decrement: availableCoupon.priceValue,
-//           },
-//         },
-//       });
-
-//       await tx.balanceTransaction.create({
-//         data: {
-//           type: BalanceTransactionType.COUPON_DEDUCTION,
-//           amount: -availableCoupon.priceValue,
-//           balanceId: 1,
-//           userId: deliveredById,
-//           couponDeliveryId: newCouponDelivery.id,
-//         },
-//       });
-
-//       await tx.coupon.update({
-//         where: { id: availableCoupon.id },
-//         data: { isDelivered: true },
-//       });
-
-//       const result = await tx.fuelRequest.update({
-//         where: { id: fuelRequest.id },
-//         data: { status: RequestStatusEnum.COMPLETED },
-//       });
-
-//       return result;
-//     });
-
-//     revalidatePath('/store');
-//     redirect(
-//       `/store?toast=success&message=Request #${updatedRequest.requestNumber} approved.`
-//     );
-//   } catch (e: unknown) {
-//     let errorMessage = 'An unexpected error occurred.';
-//     if (e instanceof Error) {
-//       errorMessage = e.message;
-//     }
-//     redirect(`/store?toast=error&message=${errorMessage}`);
-//   }
-// }
 export async function fetchDrivers() {
   const session = await getAuthSession();
 
@@ -471,4 +365,152 @@ export async function fetchDrivers() {
     console.error('Failed to fetch drivers:', error);
     throw new Error('Failed to retrieve drivers.');
   }
+}
+export async function getFuelRequestById(requestId: number) {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'TRANSPORT_FOCAL') {
+    throw new Error('Unauthorized');
+  }
+
+  const request = await prisma.fuelRequest.findUnique({
+    where: { id: requestId, focalPersonId: parseInt(session.id) },
+  });
+
+  return request;
+}
+export async function updateFuelRequest(
+  requestId: number,
+  initialState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'TRANSPORT_FOCAL') {
+    return { message: 'Unauthorized action.', error: true };
+  }
+
+  const data = Object.fromEntries(formData.entries());
+
+  const currentOdometer = parseInt(data.currentOdometer as string, 10);
+  const quantity = parseInt(data.quantity as string, 10);
+  const remark = (data.remark as string) || null;
+  const vehicleId = parseInt(data.vehicleId as string, 10);
+  const driverId = parseInt(data.driverId as string, 10);
+  const departmentId = parseInt(data.departmentId as string, 10);
+
+  if (
+    isNaN(currentOdometer) || // Check for NaN here
+    isNaN(quantity) ||
+    isNaN(vehicleId) ||
+    isNaN(driverId) ||
+    isNaN(departmentId)
+  ) {
+    return { message: 'Invalid input. Please check your fields.', error: true };
+  }
+
+  const existingRequest = await prisma.fuelRequest.findUnique({
+    where: { id: requestId, focalPersonId: parseInt(session.id) },
+  });
+
+  if (!existingRequest || existingRequest.status !== 'REJECTED') {
+    return {
+      message: 'Request not found or not in a valid state for editing.',
+      error: true,
+    };
+  }
+
+  const previousOdometer = existingRequest.previousOdometer;
+  const calculatedDifference = currentOdometer - previousOdometer; // Calculation will be safe now
+
+  const vehicle = await prisma.vehicle.findUnique({ where: { id: vehicleId } });
+  if (!vehicle) {
+    return { message: 'Vehicle not found.', error: true };
+  }
+  const fuelPrice = await prisma.fuelPrice.findUnique({
+    where: { type: vehicle.fuelType },
+  });
+  const couponValue = (await prisma.coupon.findFirst())?.priceValue || 0;
+  const literPerCoupon = fuelPrice ? couponValue / fuelPrice.price : 0;
+  const totalLiters = quantity * literPerCoupon;
+
+  try {
+    await prisma.fuelRequest.update({
+      where: { id: requestId },
+      data: {
+        currentOdometer,
+        previousOdometer,
+        calculatedDifference,
+        quantity,
+        totalLiters,
+        remark,
+        vehicle: { connect: { id: vehicleId } },
+        driver: { connect: { id: driverId } },
+        department: { connect: { id: departmentId } },
+        fuelType: vehicle.fuelType,
+        status: 'PENDING_ADMIN',
+      },
+    });
+
+    // return { message: 'Request updated successfully.', error: false };
+  } catch (error) {
+    console.error('Failed to update fuel request:', error);
+    return { message: 'Failed to update request.', error: true };
+  }
+  revalidatePath(`/transport/my-requests`);
+  redirect(`/transport/my-requests`);
+}
+export async function deleteFuelRequest(
+  initialState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'TRANSPORT_FOCAL') {
+    return { message: 'Unauthorized', error: true };
+  }
+
+  // Retrieve the requestId from the formData object
+  const requestId = parseInt(formData.get('requestId') as string, 10);
+
+  // Check if request can be deleted
+  const existingRequest = await prisma.fuelRequest.findUnique({
+    where: { id: requestId, focalPersonId: parseInt(session.id) },
+  });
+
+  if (!existingRequest || existingRequest.status !== 'REJECTED') {
+    return { message: 'Cannot delete this request.', error: true };
+  }
+
+  try {
+    await prisma.fuelRequest.delete({
+      where: { id: requestId },
+    });
+    revalidatePath('/transport-focal/requests');
+    return { message: 'Request deleted successfully.', error: false };
+  } catch (error) {
+    console.error('Failed to delete fuel request:', error);
+    return { message: 'Failed to delete request.', error: true };
+  }
+}
+export async function getFocalPersonRequests() {
+  const session = await getAuthSession();
+
+  // Ensure the user is authenticated and has the correct role
+  if (!session || session.role !== 'TRANSPORT_FOCAL') {
+    throw new Error('Unauthorized');
+  }
+
+  // Fetch all requests where the focalPersonId matches the session user's ID
+  return await prisma.fuelRequest.findMany({
+    where: {
+      focalPersonId: parseInt(session.id),
+    },
+    // Include any related data you need for the table display
+    include: {
+      vehicle: true, // Include vehicle information
+      driver: true, // Include driver information
+      department: true, // Include department information
+    },
+    orderBy: {
+      createdAt: 'desc', // Show the most recent requests first
+    },
+  });
 }
