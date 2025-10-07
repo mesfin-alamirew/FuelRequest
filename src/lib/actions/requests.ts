@@ -40,17 +40,21 @@ const createRequestSchema = z.object({
 export type FormState = {
   success?: boolean;
   message: string;
-  errors: Record<string, string[]>;
+  errors?: {
+    currentOdometer?: string[];
+    quantity?: string[];
+    remark?: string[];
+  };
 };
 // Zod schema for updating request status
 const updateRequestStatusSchema = z.object({
   requestId: z.coerce.number().int({ message: 'Request ID must be a number.' }),
 });
 
-const initialState: FormState = {
-  message: '',
-  errors: {},
-};
+// const initialState: FormState = {
+//   message: '',
+//   errors: {},
+// };
 // Define ActionState type to be used by server actions
 type ActionState = {
   success?: boolean;
