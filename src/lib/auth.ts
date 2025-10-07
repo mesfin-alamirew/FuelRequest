@@ -8,7 +8,7 @@ export interface AuthSession {
   id: string;
   name: string;
   email: string;
-  role: 'USER' | 'ADMIN' | 'TRANSPORT_FOCAL' | 'ADMIN';
+  role: string;
 }
 export async function getAuthSession() {
   const cookieStore = await cookies();
