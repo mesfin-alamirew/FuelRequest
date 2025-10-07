@@ -49,17 +49,6 @@ export type FormAndActionState = {
   };
 };
 
-// Define the shape of the state object for useActionState
-// export interface FormState {
-//   success?: boolean;
-//   message?: string;
-//   errors?: {
-//     currentOdometer?: string[];
-//     quantity?: string[];
-//     remark?: string[];
-//   };
-// }
-
 // Zod schema for updating request status
 const updateRequestStatusSchema = z.object({
   requestId: z.coerce.number().int({ message: 'Request ID must be a number.' }),
@@ -124,11 +113,12 @@ function generateNextRequestNumber(prevRequestNumber: string): string {
 
   return nextRequestNumber;
 }
+
 // The `validateAzureToken` and `token` parameter are no longer needed.
 export async function createFuelRequest(
-  prevState: unknown,
+  prevState: FormAndActionState,
   formData: FormData
-) {
+): Promise<FormAndActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'TRANSPORT_FOCAL') {
     return { message: 'Unauthorized.', errors: {} };
@@ -144,9 +134,11 @@ export async function createFuelRequest(
   );
 
   if (!validatedFields.success) {
+    // Return early with the correct structure
     return {
-      success: false,
       message: 'Invalid form data.',
+      error: true, // Indicate a general error occurred
+      // Pass the Zod field errors directly to your 'errors' property
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }

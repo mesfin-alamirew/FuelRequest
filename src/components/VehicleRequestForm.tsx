@@ -3,11 +3,11 @@
 
 import { Vehicle, Driver, Department } from '@prisma/client';
 import { ChangeEvent, useActionState, useState } from 'react';
-import { createFuelRequest, FormState } from '@/lib/actions/requests';
+import { createFuelRequest, FormAndActionState } from '@/lib/actions/requests';
 
-const initialState: FormState = {
-  success: false,
+const initialState: FormAndActionState = {
   message: '',
+  error: false,
   errors: {},
 };
 interface FormData {
@@ -99,9 +99,9 @@ export default function VehicleRequestForm({
             required
             onChange={(e) => changeHandler(e)}
           />
-          {state?.errors?.currentOdometer?.length > 0 && (
+          {(state?.errors?.currentOdometer?.length ?? 0) > 0 && (
             <p className="text-red-500 text-sm mt-1">
-              {state.errors.currentOdometer}
+              {state.errors?.currentOdometer}
             </p>
           )}
         </div>
@@ -128,8 +128,10 @@ export default function VehicleRequestForm({
             onChange={(e) => changeHandler(e)}
             required
           />
-          {state?.errors?.quantity?.length > 0 && (
-            <p className="text-red-500 text-sm mt-1">{state.errors.quantity}</p>
+          {(state?.errors?.quantity?.length ?? 0) > 0 && (
+            <p className="text-red-500 text-sm mt-1">
+              {state.errors?.quantity}
+            </p>
           )}
         </div>
 
@@ -184,8 +186,8 @@ export default function VehicleRequestForm({
           placeholder="Put some remark...."
           className="border p-2 rounded-md  w-full"
         />
-        {state?.errors?.remark?.length > 0 && (
-          <p className="text-red-500 text-sm mt-1">{state.errors.remark}</p>
+        {(state?.errors?.remark?.length ?? 0) > 0 && (
+          <p className="text-red-500 text-sm mt-1">{state.errors?.remark}</p>
         )}
       </div>
       <SubmitButton isPending={isPending} />
