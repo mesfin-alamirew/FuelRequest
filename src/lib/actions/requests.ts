@@ -11,6 +11,7 @@ import { revalidatePath } from 'next/cache';
 import { getAuthSession } from '../auth'; // Use the session from the server
 import z from 'zod';
 import { redirect } from 'next/navigation';
+import { FormState } from './admin';
 
 const prisma = new PrismaClient();
 
@@ -141,7 +142,6 @@ export async function createFuelRequest(
   const validatedFields = createRequestSchema.safeParse(
     Object.fromEntries(formData.entries())
   );
-  console.log('DDD', validatedFields);
 
   if (!validatedFields.success) {
     return {
@@ -226,9 +226,9 @@ export async function createFuelRequest(
   }
 }
 export async function updateRequestStatus(
-  prevState: FormAndActionState,
+  prevState: FormState,
   formData: FormData
-) {
+): Promise<FormState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'STORE_ATTENDANT') {
     return { message: 'Unauthorized.', errors: {} };

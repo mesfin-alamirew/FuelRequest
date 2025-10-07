@@ -2,7 +2,8 @@
 'use client';
 
 import { useActionState } from 'react';
-import { updateRequestStatus, FormState } from '@/lib/actions/requests';
+import { updateRequestStatus } from '@/lib/actions/requests';
+import { formState, FormState } from '@/lib/actions/admin';
 
 const initialState: FormState = {
   message: '',
@@ -14,7 +15,7 @@ export default function ApproveRequestForm({
 }: {
   requestId: number;
 }) {
-  const [state, formAction, isPending] = useActionState(
+  const [state, formAction, isPending] = useActionState<FormState, FormData>(
     updateRequestStatus,
     initialState
   );

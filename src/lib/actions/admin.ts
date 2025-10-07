@@ -23,10 +23,12 @@ const topUpSchema = z.object({
 });
 
 // Define the shape of the state object for useActionState
-export type FormState = {
-  message: string;
-  errors: Record<string, string[]>;
-};
+export interface FormState {
+  message?: string;
+  errors?: {
+    requestId?: string[];
+  };
+}
 
 const initialState: FormState = {
   message: '',
