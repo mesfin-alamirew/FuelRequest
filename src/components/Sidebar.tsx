@@ -57,6 +57,14 @@ export default function Sidebar() {
                   Vehicles
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/admin/manage-drivers"
+                  className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+                >
+                  Drivers
+                </Link>
+              </li>
             </>
           )}
           {(!session || (session?.role as string)) === 'TRANSPORT_FOCAL' && (
@@ -70,14 +78,24 @@ export default function Sidebar() {
             </li>
           )}
           {(session?.role as string) === 'STORE_ATTENDANT' && (
-            <li>
-              <Link
-                href="/store"
-                className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
-              >
-                Deliver Coupon
-              </Link>
-            </li>
+            <>
+              <li>
+                <Link
+                  href="/store"
+                  className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+                >
+                  Deliver Coupon
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/admin/manage-coupons"
+                  className="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700"
+                >
+                  Coupons
+                </Link>
+              </li>
+            </>
           )}
           {(session?.role as string) === 'ADMIN' && (
             <>

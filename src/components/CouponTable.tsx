@@ -2,10 +2,12 @@
 
 import { fetchCoupons } from '@/lib/actions/admin';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import Link from 'next/link';
+import AddCouponForm from './AddCouponForm';
+import { toast } from 'react-toastify';
 
 type Coupon = {
   id: number;
@@ -52,6 +54,8 @@ export default function CouponTable({
 }: Props) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [coupons, setCoupons] = useState(initialCoupons);
+
   const { replace } = useRouter();
 
   const initialState = {
@@ -60,9 +64,17 @@ export default function CouponTable({
     totalPages,
   };
 
-  const [paginationState, formAction] = useActionState(
-    fetchPageWithParams,
-    initialState
+  // const [paginationState, formAction] = useActionState(
+  //   fetchPageWithParams,
+  //   initialState
+  // );
+  const [paginationState, formAction] = useActionState<ActionState, FormData>(
+    fetchPageWithParams, // Your server action
+    {
+      coupons: initialCoupons,
+      totalPages: initialPage,
+      currentPage: initialPage,
+    }
   );
 
   const handleSearch = useDebouncedCallback((query: string) => {
@@ -77,6 +89,14 @@ export default function CouponTable({
   }, 500);
 
   const router = useRouter();
+  const handleCouponAdded = async () => {
+    try {
+      const updatedCoupons = await fetchCoupons();
+      setCoupons(updatedCoupons.coupons);
+    } catch (error) {
+      toast.error('Failed to update department list.');
+    }
+  };
   const handlePageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set('page', page.toString());
@@ -86,6 +106,8 @@ export default function CouponTable({
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
   return (
     <div>
+      <AddCouponForm onCouponAdded={handleCouponAdded} />
+
       <div className="mb-4">
         <input
           key={searchParams.get('query') || ''}
@@ -102,7 +124,8 @@ export default function CouponTable({
           <tr>
             <th className="px-6 py-3 text-left">Coupon Number</th>
             <th className="px-6 py-3 text-left">Price Value</th>
-            {/* ... other table headers */}
+            <th className="px-6 py-3 text-left">Status</th>
+            <th className="px-6 py-3 text-left">Actions</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">

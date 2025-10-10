@@ -188,7 +188,10 @@ export async function fetchCoupons(
   pageSize: number = 10
 ) {
   const session = await getAuthSession();
-  if (!session || session.role !== 'ADMIN') {
+  if (
+    !session ||
+    (session.role !== 'ADMIN' && session.role !== 'STORE_ATTENDANT')
+  ) {
     throw new Error('Unauthorized');
   }
 
@@ -316,7 +319,10 @@ export async function fetchDepartments(query: string = '') {
  */
 export async function createCoupon(formData: FormData) {
   const session = await getAuthSession();
-  if (!session || session.role !== 'ADMIN') {
+  if (
+    !session ||
+    (session.role !== 'ADMIN' && session.role !== 'STORE_ATTENDANT')
+  ) {
     throw new Error('Unauthorized');
   }
   const couponNumber = formData.get('couponNumber') as string;
@@ -724,6 +730,98 @@ export async function deleteVehicle(vehicleId: number) {
     revalidatePath('/admin/manage-vehicles');
   } catch (error) {
     throw new Error('Failed to delete vehicle.');
+  }
+}
+/**
+ * Fetches vehicles with optional search.
+ */
+export async function fetchDrivers(query: string = '') {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+  return prisma.driver.findMany({
+    where: {
+      name: {
+        contains: query,
+        mode: 'insensitive',
+      },
+    },
+    orderBy: { name: 'asc' },
+  });
+}
+/**
+ * Creates a new driver.
+ */
+export async function createDriver(formData: FormData) {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const name = formData.get('name') as string;
+
+  if (!name) {
+    throw new Error('Invalid input for driver creation.');
+  }
+
+  try {
+    await prisma.driver.create({
+      data: { name },
+    });
+    revalidatePath('/admin/manage-drivers');
+  } catch (error: unknown) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw new Error('A driver with this name already exists.');
+    }
+    throw new Error('Failed to create driver.');
+  }
+}
+
+/**
+ * Updates an existing driver.
+ */
+export async function updateDriver(driverId: number, formData: FormData) {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const name = formData.get('name') as string;
+
+  if (!name) {
+    throw new Error('Invalid input for vehicle update.');
+  }
+
+  try {
+    await prisma.driver.update({
+      where: { id: driverId },
+      data: { name },
+    });
+    revalidatePath('/admin/manage-drivers');
+  } catch (error: unknown) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      throw new Error('A driver with this name already exists.');
+    }
+    throw new Error('Failed to update driver.');
+  }
+}
+
+/**
+ * Deletes a driver.
+ */
+export async function deleteDriver(driverId: number) {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  try {
+    // Implement logic to handle related FuelRequests (e.g., prevent deletion if requests exist)
+    await prisma.driver.delete({ where: { id: driverId } });
+    revalidatePath('/admin/manage-drivers');
+  } catch (error) {
+    throw new Error('Failed to delete driver.');
   }
 }
 
