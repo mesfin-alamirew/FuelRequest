@@ -80,8 +80,13 @@ function redirectWithToast(
 function generateNextRequestNumber(prevRequestNumber: string): string {
   const currentYear = new Date().getFullYear();
 
+  // Format prevNumber in YYYY-NNNN if it has a value 1
+  const formattedPrevNumber =
+    prevRequestNumber === '0'
+      ? `${currentYear.toString()} - ${prevRequestNumber}`
+      : prevRequestNumber;
   // 1. Split the string to get the numeric part and the year.
-  const parts = prevRequestNumber.split('-');
+  const parts = formattedPrevNumber.split('-');
 
   // Check if the input format is valid.
   if (parts.length !== 2) {
@@ -205,9 +210,6 @@ export async function createFuelRequest(
     });
 
     // revalidatePath('/requests/deliver');
-    redirect(
-      `/transport?toast=success&message=Fuel request #${newRequest.requestNumber} submitted.`
-    );
   } catch (e: unknown) {
     // Handle redirect for errors
     let errorMessage = 'An unexpected error occurred.';
@@ -216,6 +218,9 @@ export async function createFuelRequest(
     }
     redirect(`/transport?toast=error&message=${errorMessage}`);
   }
+  redirect(
+    `/transport?toast=success&message=Fuel request submitted suuccessfully!.`
+  );
 }
 export async function updateRequestStatus(
   prevState: FormState,
