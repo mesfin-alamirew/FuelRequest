@@ -210,6 +210,9 @@ export async function createFuelRequest(
     });
 
     // revalidatePath('/requests/deliver');
+    // redirect(
+    //   `/transport?toast=success&message=Fuel request# ${newRequest.requestNumber} submitted.`
+    // );
   } catch (e: unknown) {
     // Handle redirect for errors
     let errorMessage = 'An unexpected error occurred.';
@@ -219,7 +222,7 @@ export async function createFuelRequest(
     redirect(`/transport?toast=error&message=${errorMessage}`);
   }
   redirect(
-    `/transport?toast=success&message=Fuel request submitted suuccessfully!.`
+    `/transport?toast=success&message=Fuel request submitted successfully!.`
   );
 }
 export async function updateRequestStatus(
