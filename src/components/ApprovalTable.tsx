@@ -45,7 +45,7 @@ export default function ApprovalTable({
   );
 
   return (
-    <div>
+    <div className="w-[90%]">
       {/* Display messages from the server actions */}
       {(approveState?.message || rejectState?.message) && (
         <div

@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { MsalProvider } from '@/providers/MsalProvider';
 import { TokenHandler } from '@/components/TokenHandler';
-import Header from '@/components/Header';
+
 import { getAuthSession } from '@/lib/auth';
 import { SessionProvider } from '@/providers/SessionProvider';
 import { ToastProvider } from '@/providers/ToastProvider';
