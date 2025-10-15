@@ -1,9 +1,5 @@
 import ApprovalTable from '@/components/ApprovalTable';
-import {
-  getPendingFuelRequestsAdmin,
-  approveRequest,
-  rejectRequest,
-} from '@/lib/actions/admin';
+import { getPendingFuelRequestsAdmin } from '@/lib/actions/admin';
 
 import { notFound } from 'next/navigation';
 

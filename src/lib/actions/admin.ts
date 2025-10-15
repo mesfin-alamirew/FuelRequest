@@ -833,9 +833,49 @@ export async function getPendingFuelRequestsAdmin() {
 
   return await prisma.fuelRequest.findMany({
     where: { status: 'PENDING_ADMIN' },
-    include: {
-      focalPerson: true,
-      vehicle: true,
+    select: {
+      // Select all scalar fields from FuelRequest
+      id: true,
+      requestNumber: true,
+      currentOdometer: true,
+      previousOdometer: true,
+      calculatedDifference: true,
+      quantity: true,
+      fuelType: true,
+      totalLiters: true,
+      status: true,
+      createdAt: true,
+      remark: true,
+
+      // Include the related models and select specific fields from them
+      focalPerson: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      vehicle: {
+        select: {
+          id: true,
+          plate: true,
+        },
+      },
+      // Include other related models here if needed
+      department: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      driver: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
   });
 }

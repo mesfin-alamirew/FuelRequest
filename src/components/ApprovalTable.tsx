@@ -6,6 +6,9 @@ import { approveRequest, rejectRequest } from '@/lib/actions/admin';
 // Define the type for a pending fuel request, including nested data
 type PendingRequest = {
   id: number;
+  previousOdometer: number;
+  currentOdometer: number;
+  calculatedDifference: number;
   requestNumber: string;
   vehicle: {
     plate: string;
@@ -88,14 +91,32 @@ export default function ApprovalTable({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Quantity
+                First OM
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Remark
+                Second OM
               </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Difference
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Quantity
+              </th>
+              {/* <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Remark
+              </th> */}
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -123,11 +144,20 @@ export default function ApprovalTable({
                   {request.fuelType}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.quantity}
+                  {request.previousOdometer}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.remark || 'N/A'}
+                  {request.currentOdometer}
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {request.calculatedDifference}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {request.quantity}
+                </td>
+                {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {request.remark || ''}
+                </td> */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {new Date(request.createdAt).toLocaleDateString()}
                 </td>
