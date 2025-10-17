@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Outfit } from 'next/font/google';
 import './globals.css';
 import { MsalProvider } from '@/providers/MsalProvider';
 import { TokenHandler } from '@/components/TokenHandler';
@@ -8,6 +8,8 @@ import { getAuthSession } from '@/lib/auth';
 import { SessionProvider } from '@/providers/SessionProvider';
 import { ToastProvider } from '@/providers/ToastProvider';
 import { ToastHandler } from './ToastHandler';
+import { SidebarProvider } from '@/providers/SidebarContext';
+import { ThemeProvider } from '@/providers/ThemeContext';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -23,6 +25,9 @@ export const metadata: Metadata = {
   title: 'Fuel Requisition System',
   description: 'Fuel requisition system version 1',
 };
+const outfit = Outfit({
+  subsets: ['latin'],
+});
 
 export default async function RootLayout({
   children,
@@ -32,18 +37,18 @@ export default async function RootLayout({
   const session = await getAuthSession(); // Fetch session server-side
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <MsalProvider>
-          <SessionProvider session={session}>
-            <TokenHandler />
-            {/* <Header /> */}
-            <ToastProvider />
-            <ToastHandler />
-            {children}
-          </SessionProvider>
-        </MsalProvider>
+      <body className={`${outfit.className} dark:bg-gray-900`}>
+        <ThemeProvider>
+          <MsalProvider>
+            <SessionProvider session={session}>
+              <TokenHandler />
+
+              <ToastProvider />
+              <ToastHandler />
+              <SidebarProvider>{children}</SidebarProvider>
+            </SessionProvider>
+          </MsalProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

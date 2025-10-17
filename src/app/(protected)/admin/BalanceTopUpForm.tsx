@@ -16,7 +16,10 @@ export default function BalanceTopUpForm() {
   );
 
   return (
-    <form action={formAction} className="p-6 border rounded-lg bg-gray-50">
+    <form
+      action={formAction}
+      className="p-6 border rounded-lg text-gray-800 dark:text-white/90"
+    >
       <h3 className="text-xl font-semibold mb-4">Add Funds to Balance</h3>
       <div className="flex flex-col mb-4">
         <label htmlFor="amount" className="mb-1">

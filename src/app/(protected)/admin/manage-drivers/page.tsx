@@ -4,6 +4,8 @@ import Search from '@/components/Search';
 
 import { fetchDrivers } from '@/lib/actions/admin';
 import DriverManagementTable from '@/components/DriverManagementTable';
+import PageBreadcrumb from '@/components/PageBreadCrumb';
+import ComponentCard from '@/components/ComponentCard';
 
 export default async function ManageDriversPage({
   searchParams,
@@ -14,10 +16,13 @@ export default async function ManageDriversPage({
   const drivers = await fetchDrivers(query);
 
   return (
-    <div className="m-6 flex flex-col gap-2">
-      <h1 className="text-2xl font-bold">Manage Vehicles</h1>
-      <Search placeholder="Search by name..." />
-      <DriverManagementTable initialDrivers={drivers} />
+    <div>
+      <PageBreadcrumb pageTitle="Manage Driver" />
+      <div className="space-y-6">
+        <ComponentCard title="Drivers">
+          <DriverManagementTable initialDrivers={drivers} />
+        </ComponentCard>
+      </div>
     </div>
   );
 }

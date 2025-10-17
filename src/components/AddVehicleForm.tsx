@@ -37,13 +37,22 @@ export default function AddVehicleForm({
   const { pending } = useFormStatus();
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mt-8">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+    <div className="p-6 rounded-lg shadow-md">
+      <h2 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
         Add New Vehicle
       </h2>
       <form action={formAction} className="space-y-4">
-        <Input name="plate" placeholder="Plate Number" required />
-        <Select name="fuelType" required>
+        <Input
+          name="plate"
+          placeholder="Plate Number"
+          required
+          className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-2 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 "
+        />
+        <Select
+          name="fuelType"
+          required
+          className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-2 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+        >
           <option value="">Select Fuel Type</option>
           {Object.values(FuelTypeEnum).map((type) => (
             <option key={type} value={type}>
@@ -56,6 +65,7 @@ export default function AddVehicleForm({
           type="number"
           placeholder="Last Odometer Reading"
           required
+          className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-2 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 "
         />
         <button
           type="submit"

@@ -1,4 +1,6 @@
+import ComponentCard from '@/components/ComponentCard';
 import CouponTable from '@/components/CouponTable';
+import PageBreadcrumb from '@/components/PageBreadCrumb';
 import { fetchCoupons } from '@/lib/actions/admin';
 
 import { notFound } from 'next/navigation';
@@ -24,14 +26,18 @@ export default async function CouponsPage({
   const componentKey = `${currentPage}-${searchQuery}`;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Coupons Dashboard</h1>
-      <CouponTable
-        key={componentKey} // Add the key here
-        initialCoupons={coupons}
-        initialPage={currentPage}
-        totalPages={totalPages}
-      />
+    <div>
+      <PageBreadcrumb pageTitle="Manage Coupons" />
+      <div className="space-y-6">
+        <ComponentCard title="Coupons">
+          <CouponTable
+            key={componentKey} // Add the key here
+            initialCoupons={coupons}
+            initialPage={currentPage}
+            totalPages={totalPages}
+          />
+        </ComponentCard>
+      </div>
     </div>
   );
 }

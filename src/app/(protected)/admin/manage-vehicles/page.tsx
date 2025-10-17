@@ -4,6 +4,8 @@ import { fetchVehicles } from '@/lib/actions/admin';
 
 import Search from '@/components/Search';
 import VehicleManagementTable from '@/components/VehicleManagementTable';
+import PageBreadcrumb from '@/components/PageBreadCrumb';
+import ComponentCard from '@/components/ComponentCard';
 
 export default async function ManageVehiclesPage({
   searchParams,
@@ -14,10 +16,13 @@ export default async function ManageVehiclesPage({
   const vehicles = await fetchVehicles(query);
 
   return (
-    <div className="m-6 flex flex-col gap-2">
-      <h1 className="text-2xl font-bold">Manage Vehicles</h1>
-      <Search placeholder="Search by plate or fuel type..." />
-      <VehicleManagementTable initialVehicles={vehicles} />
+    <div>
+      <PageBreadcrumb pageTitle="Manage Vehicles" />
+      <div className="space-y-6">
+        <ComponentCard title="Vehicles">
+          <VehicleManagementTable initialVehicles={vehicles} />
+        </ComponentCard>
+      </div>
     </div>
   );
 }

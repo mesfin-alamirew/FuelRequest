@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react';
 import { approveRequest, rejectRequest } from '@/lib/actions/admin';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from './ui/table';
 
 // Define the type for a pending fuel request, including nested data
 type PendingRequest = {
@@ -45,7 +46,7 @@ export default function ApprovalTable({
   );
 
   return (
-    <div className="w-[90%]">
+    <div>
       {/* Display messages from the server actions */}
       {(approveState?.message || rejectState?.message) && (
         <div
@@ -59,145 +60,149 @@ export default function ApprovalTable({
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Request #
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Requested By
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Vehicle Plate
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Fuel Type
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                First OM
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Second OM
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Difference
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Quantity
-              </th>
-              {/* <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Remark
-              </th> */}
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Requested At
-              </th>
-              <th scope="col" className="relative px-6 py-3">
-                <span className="sr-only">Actions</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {requests.map((request) => (
-              <tr key={request.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {request.requestNumber}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.focalPerson.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.vehicle.plate}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.fuelType}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.previousOdometer}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.currentOdometer}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.calculatedDifference}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.quantity}
-                </td>
-                {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {request.remark || ''}
-                </td> */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(request.createdAt).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <div className="flex space-x-2">
-                    {/* Approve form */}
-                    <form action={approveAction}>
-                      <input
-                        type="hidden"
-                        name="requestId"
-                        value={request.id}
-                      />
-                      <button
-                        type="submit"
-                        className="text-green-600 hover:text-green-900"
-                      >
-                        Approve
-                      </button>
-                    </form>
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div className="max-w-full overflow-x-auto">
+          <div className="min-w-[1102px]">
+            <Table>
+              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                <TableRow>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Request #
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Requested By
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Vehicle Plate
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Fuel Type
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    First OM
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Second OM
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Difference
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Quantity
+                  </TableCell>
 
-                    {/* Reject form */}
-                    <form action={rejectAction}>
-                      <input
-                        type="hidden"
-                        name="requestId"
-                        value={request.id}
-                      />
-                      <button
-                        type="submit"
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Reject
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Requested At
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    <span className="sr-only">Actions</span>
+                  </TableCell>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                {requests.map((request) => (
+                  <TableRow key={request.id}>
+                    <TableCell className="px-5 py-4 sm:px-6 text-start">
+                      <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                        {request.requestNumber}
+                      </span>
+                    </TableCell>
+
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {request.focalPerson.name}
+                    </TableCell>
+
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {request.vehicle.plate}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {request.fuelType}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {request.previousOdometer}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {request.currentOdometer}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {request.calculatedDifference}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {request.quantity}
+                    </TableCell>
+
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {new Date(request.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      <div className="flex space-x-2">
+                        {/* Approve form */}
+                        <form action={approveAction}>
+                          <input
+                            type="hidden"
+                            name="requestId"
+                            value={request.id}
+                          />
+                          <button
+                            type="submit"
+                            className="text-green-600 hover:text-green-900"
+                          >
+                            Approve
+                          </button>
+                        </form>
+
+                        {/* Reject form */}
+                        <form action={rejectAction}>
+                          <input
+                            type="hidden"
+                            name="requestId"
+                            value={request.id}
+                          />
+                          <button
+                            type="submit"
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Reject
+                          </button>
+                        </form>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
     </div>
   );

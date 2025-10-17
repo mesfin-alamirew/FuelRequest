@@ -7,6 +7,7 @@ import { deleteVehicle, fetchVehicles } from '@/lib/actions/admin';
 import type { Vehicle } from '@prisma/client';
 import AddVehicleForm from './AddVehicleForm';
 import EditVehicleForm from './EditVehicleForm'; // Import the new component
+import { Table, TableBody, TableCell, TableHeader, TableRow } from './ui/table';
 
 type VehicleManagementTableProps = {
   initialVehicles: Vehicle[];
@@ -45,74 +46,80 @@ export default function VehicleManagementTable({
   };
 
   return (
-    <div>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <table>
-          <thead className="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Plate Number
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Fuel Type
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Last Odometer
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {vehicles.map((vehicle) => (
-              <tr key={vehicle.id}>
-                <td className="px-6 py-4 whitespace-nowrap">{vehicle.plate}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {vehicle.fuelType}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {vehicle.lastOdometer}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <button
-                    onClick={() => setEditingVehicleId(vehicle.id)}
-                    className="text-indigo-600 hover:text-indigo-900 mr-4"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteVehicle(vehicle.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {editingVehicleId && (
-        <EditVehicleForm
-          vehicle={vehicles.find((v) => v.id === editingVehicleId)!}
-          onCancel={() => setEditingVehicleId(null)}
-          onVehicleUpdated={handleVehicleUpdated}
-        />
-      )}
+    <>
       <AddVehicleForm onVehicleAdded={handleDataRefresh} />
-    </div>
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div className="max-w-full overflow-x-auto">
+          <div className="min-w-[1102px]">
+            <Table>
+              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                <TableRow>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Plate Number
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Fuel Type
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Last Odometer
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Actions
+                  </TableCell>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                {vehicles.map((vehicle) => (
+                  <TableRow key={vehicle.id}>
+                    <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {vehicle.plate}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {vehicle.fuelType}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      {vehicle.lastOdometer}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                      <button
+                        onClick={() => setEditingVehicleId(vehicle.id)}
+                        className="text-indigo-600 hover:text-indigo-900 mr-4"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteVehicle(vehicle.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Delete
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          {editingVehicleId && (
+            <EditVehicleForm
+              vehicle={vehicles.find((v) => v.id === editingVehicleId)!}
+              onCancel={() => setEditingVehicleId(null)}
+              onVehicleUpdated={handleVehicleUpdated}
+            />
+          )}
+        </div>
+      </div>
+    </>
   );
 }

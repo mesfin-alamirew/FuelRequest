@@ -19,12 +19,16 @@ export default async function AdminPage() {
   }
 
   return (
-    <main className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+    <main className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
+      <h1 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
+        Admin Dashboard
+      </h1>
       <div className="flex justify-between">
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold">Current Balance</h2>
-          <p className="text-4xl font-bold text-green-600">
+          <h2 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
+            Current Balance
+          </h2>
+          <p className="text-4xl font-bold text-gray-800 dark:text-white/90">
             ${balance.currentAmount.toFixed(2)}
           </p>
         </div>

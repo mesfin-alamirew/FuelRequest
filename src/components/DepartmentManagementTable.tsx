@@ -2,7 +2,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { toast } from 'react-toastify';
 import {
   createDepartment,
@@ -12,10 +12,11 @@ import {
 } from '@/lib/actions/admin';
 import { Input } from '@/components/ui/Input';
 import type { Department } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
+import { Table, TableBody, TableCell, TableHeader, TableRow } from './ui/table';
 
 type DepartmentManagementTableProps = {
-  initialDepartments: Department[];
+  departments: Department[];
 };
 
 type FormState = { success?: boolean; error?: string } | null;
@@ -114,10 +115,16 @@ function AddDepartmentForm({
       action={formAction}
       className="mt-8 space-y-4 border p-2 border-gray-200 rounded-2xl"
     >
-      <h2 className="text-xl font-semibold text-gray-800">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
         Add New Department
       </h2>
-      <Input name="name" placeholder="Department Name" required />
+
+      <Input
+        name="name"
+        placeholder="Department Name"
+        required
+        className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+      />
       <button
         type="submit"
         disabled={pending}
@@ -132,15 +139,14 @@ function AddDepartmentForm({
 }
 
 export default function DepartmentManagementTable({
-  initialDepartments,
+  departments,
 }: DepartmentManagementTableProps) {
-  const [departments, setDepartments] = useState(initialDepartments);
   const [editingDeptId, setEditingDeptId] = useState<number | null>(null);
-
+  console.log('AA', departments.length);
   const handleDepartmentAdded = async () => {
     try {
       const updatedDepartments = await fetchDepartments();
-      setDepartments(updatedDepartments);
+      // setDepartments(updatedDepartments);
     } catch (error) {
       toast.error('Failed to update department list.');
     }
@@ -161,67 +167,72 @@ export default function DepartmentManagementTable({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <>
       <AddDepartmentForm onDepartmentAdded={handleDepartmentAdded} />
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div className="max-w-full overflow-x-auto">
+          <div className="min-w-[1102px]">
+            <Table>
+              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                <TableRow>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    ID
+                  </TableCell>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Name
+                  </TableCell>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  ID
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Name
-                </th>
-
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {departments.map((dept) => (
-                <tr key={dept.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{dept.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{dept.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => setEditingDeptId(dept.id)}
-                      className="text-indigo-600 hover:text-indigo-900 mr-4"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteDepartment(dept.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Actions
+                  </TableCell>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                {departments.map((dept) => (
+                  <TableRow key={dept.id}>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {dept.id}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {dept.name}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      <button
+                        onClick={() => setEditingDeptId(dept.id)}
+                        className="text-indigo-600 hover:text-indigo-900 mr-4"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteDepartment(dept.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Delete
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
+        {editingDeptId && (
+          <EditDepartmentForm
+            department={departments.find((d) => d.id === editingDeptId)!}
+            onCancel={() => setEditingDeptId(null)}
+            onDepartmentUpdated={handleDepartmentUpdated}
+          />
+        )}
       </div>
-      {editingDeptId && (
-        <EditDepartmentForm
-          department={departments.find((d) => d.id === editingDeptId)!}
-          onCancel={() => setEditingDeptId(null)}
-          onDepartmentUpdated={handleDepartmentUpdated}
-        />
-      )}
-    </div>
+    </>
   );
 }

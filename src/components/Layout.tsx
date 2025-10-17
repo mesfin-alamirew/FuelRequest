@@ -3,19 +3,30 @@
 import { useState } from 'react';
 import Header from './Header'; // From previous step
 import Sidebar from './Sidebar';
+import Backdrop from './Backdrop';
+import { useSidebar } from '@/providers/SidebarContext';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  // Dynamic class for main content margin based on sidebar state
+  const mainContentMargin = isMobileOpen
+    ? 'ml-0'
+    : isExpanded || isHovered
+    ? 'lg:ml-[290px]'
+    : 'lg:ml-[90px]';
+
   return (
-    <div className="flex">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className="flex-1 transition-all duration-300">
-        <Header isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <main className="mt-16 p-4">{children}</main>
+    <div className="min-h-screen xl:flex">
+      <Sidebar />
+      <Backdrop />
+      <div
+        className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
+      >
+        <Header />
+        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+          {children}
+        </div>
       </div>
     </div>
   );

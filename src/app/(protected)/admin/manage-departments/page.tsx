@@ -1,14 +1,20 @@
 // src/app/admin/manage-departments/page.tsx
-import Layout from '@/components/Layout';
+
 import { fetchDepartments } from '@/lib/actions/admin';
 import DepartmentManagementTable from '@/components/DepartmentManagementTable';
+import ComponentCard from '@/components/ComponentCard';
+import PageBreadcrumb from '@/components/PageBreadCrumb';
 
 export default async function ManageDepartmentsPage() {
   const departments = await fetchDepartments();
   return (
-    <div className="flex flex-col p-8">
-      <h1 className="text-2xl font-bold">Manage Departments</h1>
-      <DepartmentManagementTable initialDepartments={departments} />
+    <div>
+      <PageBreadcrumb pageTitle="Manage Departments" />
+      <div className="space-y-6">
+        <ComponentCard title="Departments' list ">
+          <DepartmentManagementTable departments={departments} />
+        </ComponentCard>
+      </div>
     </div>
   );
 }

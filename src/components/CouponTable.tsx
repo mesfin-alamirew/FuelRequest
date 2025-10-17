@@ -8,6 +8,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import Link from 'next/link';
 import AddCouponForm from './AddCouponForm';
 import { toast } from 'react-toastify';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from './ui/table';
 
 type Coupon = {
   id: number;
@@ -105,64 +106,91 @@ export default function CouponTable({
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
   return (
-    <div>
+    <>
       <AddCouponForm onCouponAdded={handleCouponAdded} />
 
       <div className="mb-4">
-        <input
+        {/* <input
           key={searchParams.get('query') || ''}
           type="text"
           placeholder="Search by coupon number..."
           onChange={(e) => handleSearch(e.target.value)}
           defaultValue={searchParams.get('query')?.toString()}
           className="border rounded px-2 py-1 w-full"
-        />
+        /> */}
       </div>
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div className="max-w-full overflow-x-auto">
+          <div className="min-w-[1102px]"></div>
 
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left">Coupon Number</th>
-            <th className="px-6 py-3 text-left">Price Value</th>
-            <th className="px-6 py-3 text-left">Status</th>
-            <th className="px-6 py-3 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {paginationState.coupons.map((coupon) => (
-            <tr key={coupon.id}>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {coupon.couponNumber}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                ${coupon.priceValue}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                {coupon.isDelivered ? (
-                  <span className="text-red-400 font-bold ">Delivered</span>
-                ) : (
-                  <span className="text-green-400 font-bold ">Available</span>
-                )}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex gap-4">
-                  <Link href={`/admin/manage-coupons/${coupon.id}/edit`}>
-                    <button className="text-blue-600 hover:text-blue-900 cursor-pointer">
-                      Edit
-                    </button>
-                  </Link>
-                  <Link href={`/coupons/${coupon.id}/edit`}>
-                    <button className="text-red-600 hover:text-red-900 cursor-pointer">
-                      Delete
-                    </button>
-                  </Link>
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap"></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          <Table>
+            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+              <TableRow>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Coupon Number
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Price Value
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Status
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Actions
+                </TableCell>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+              {paginationState.coupons.map((coupon) => (
+                <TableRow key={coupon.id}>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {coupon.couponNumber}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    ${coupon.priceValue}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {coupon.isDelivered ? (
+                      <span className="text-red-400 font-bold ">Delivered</span>
+                    ) : (
+                      <span className="text-green-400 font-bold ">
+                        Available
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    <div className="flex gap-4">
+                      <Link href={`/admin/manage-coupons/${coupon.id}/edit`}>
+                        <button className="text-blue-600 hover:text-blue-900 cursor-pointer">
+                          Edit
+                        </button>
+                      </Link>
+                      <Link href={`/coupons/${coupon.id}/edit`}>
+                        <button className="text-red-600 hover:text-red-900 cursor-pointer">
+                          Delete
+                        </button>
+                      </Link>
+                    </div>
+                  </TableCell>
+                  <td className="px-6 py-4 whitespace-nowrap"></td>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
 
       {/* Pagination controls */}
       <div className="flex justify-center mt-8 space-x-2">
@@ -220,6 +248,6 @@ export default function CouponTable({
           </button>
         </form>
       </div>
-    </div>
+    </>
   );
 }
