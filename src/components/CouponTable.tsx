@@ -121,132 +121,136 @@ export default function CouponTable({
       </div>
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <div className="max-w-full overflow-x-auto">
-          <div className="min-w-[1102px]"></div>
-
-          <Table>
-            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-              <TableRow>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Coupon Number
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Price Value
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {paginationState.coupons.map((coupon) => (
-                <TableRow key={coupon.id}>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {coupon.couponNumber}
+          <div className="min-w-[1102px]">
+            <Table>
+              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                <TableRow>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Coupon Number
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    ${coupon.priceValue}
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Price Value
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {coupon.isDelivered ? (
-                      <span className="text-red-400 font-bold ">Delivered</span>
-                    ) : (
-                      <span className="text-green-400 font-bold ">
-                        Available
-                      </span>
-                    )}
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Status
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <div className="flex gap-4">
-                      <Link href={`/admin/manage-coupons/${coupon.id}/edit`}>
-                        <button className="text-blue-600 hover:text-blue-900 cursor-pointer">
-                          Edit
-                        </button>
-                      </Link>
-                      <Link href={`/coupons/${coupon.id}/edit`}>
-                        <button className="text-red-600 hover:text-red-900 cursor-pointer">
-                          Delete
-                        </button>
-                      </Link>
-                    </div>
+                  <TableCell
+                    isHeader
+                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  >
+                    Actions
                   </TableCell>
-                  <td className="px-6 py-4 whitespace-nowrap"></td>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                {paginationState.coupons.map((coupon) => (
+                  <TableRow key={coupon.id}>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {coupon.couponNumber}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      ${coupon.priceValue}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      {coupon.isDelivered ? (
+                        <span className="text-red-400 font-bold ">
+                          Delivered
+                        </span>
+                      ) : (
+                        <span className="text-green-400 font-bold ">
+                          Available
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                      <div className="flex gap-4">
+                        <Link href={`/admin/manage-coupons/${coupon.id}/edit`}>
+                          <button className="text-blue-600 hover:text-blue-900 cursor-pointer">
+                            Edit
+                          </button>
+                        </Link>
+                        <Link href={`/coupons/${coupon.id}/edit`}>
+                          <button className="text-red-600 hover:text-red-900 cursor-pointer">
+                            Delete
+                          </button>
+                        </Link>
+                      </div>
+                    </TableCell>
+                    <td className="px-6 py-4 whitespace-nowrap"></td>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
-      </div>
 
-      {/* Pagination controls */}
-      <div className="flex justify-center mt-8 space-x-2">
-        <form action={formAction}>
-          <input
-            type="hidden"
-            name="page"
-            value={paginationState.currentPage - 1}
-          />
-          <input
-            type="hidden"
-            name="query"
-            value={searchParams.get('query') || ''}
-          />
-          <input type="hidden" name="pageSize" value={10} />
-          <button
-            type="submit"
-            disabled={paginationState.currentPage <= 1}
-            className=" px-4 py-2  bg-blue-600 text-white rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-        </form>
-        {pages.map((page) => (
-          <button
-            key={page}
-            onClick={() => handlePageChange(page)}
-            className={`px-4 py-2 rounded-md ${
-              page === paginationState.currentPage
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-300 text-gray-700 cursor-pointer'
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-        <form action={formAction}>
-          <input
-            type="hidden"
-            name="page"
-            value={paginationState.currentPage + 1}
-          />
-          <input
-            type="hidden"
-            name="query"
-            value={searchParams.get('query') || ''}
-          />
-          <input type="hidden" name="pageSize" value={10} />
-          <button
-            type="submit"
-            disabled={paginationState.currentPage >= paginationState.totalPages}
-            className=" px-4 py-2  bg-blue-600 text-white rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </form>
+        {/* Pagination controls */}
+        <div className="flex justify-center mt-8 space-x-2">
+          <form action={formAction}>
+            <input
+              type="hidden"
+              name="page"
+              value={paginationState.currentPage - 1}
+            />
+            <input
+              type="hidden"
+              name="query"
+              value={searchParams.get('query') || ''}
+            />
+            <input type="hidden" name="pageSize" value={10} />
+            <button
+              type="submit"
+              disabled={paginationState.currentPage <= 1}
+              className=" px-4 py-2  bg-blue-600 text-white rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+          </form>
+          {pages.map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page)}
+              className={`px-4 py-2 rounded-md ${
+                page === paginationState.currentPage
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-300 text-gray-700 cursor-pointer'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          <form action={formAction}>
+            <input
+              type="hidden"
+              name="page"
+              value={paginationState.currentPage + 1}
+            />
+            <input
+              type="hidden"
+              name="query"
+              value={searchParams.get('query') || ''}
+            />
+            <input type="hidden" name="pageSize" value={10} />
+            <button
+              type="submit"
+              disabled={
+                paginationState.currentPage >= paginationState.totalPages
+              }
+              className=" px-4 py-2  bg-blue-600 text-white rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </form>
+        </div>
       </div>
     </>
   );

@@ -1,63 +1,74 @@
 'use client';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+
 import { usePathname } from 'next/navigation';
 import {
-  CalendarHeartIcon,
   CarIcon,
   ChartBar,
   ChevronDownIcon,
   CircleQuestionMark,
-  CuboidIcon,
-  DotIcon,
-  DotSquareIcon,
   Ellipsis,
+  FileQuestionIcon,
   GridIcon,
   ListIcon,
-  PackageIcon,
-  PieChartIcon,
-  Plug2Icon,
-  TableIcon,
   User2Icon,
   UserCircleIcon,
-  Users,
 } from 'lucide-react';
 import { useSidebar } from '@/providers/SidebarContext';
+import { useSession } from '@/providers/SessionProvider';
 
 type NavItem = {
   name: string;
   icon: React.ReactNode;
   path?: string;
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
+  roles: string[];
 };
 
 const navItems: NavItem[] = [
   {
+    icon: <FileQuestionIcon />,
+    name: 'Request',
+    path: '/transport',
+    roles: ['TRANSPORT_FOCAL'],
+  },
+  {
     icon: <GridIcon />,
     name: 'Dashboard',
     path: '/dashboard',
+    roles: ['ADMIN'],
   },
   {
     icon: <UserCircleIcon />,
     name: 'Users',
     path: '/admin/manage-users',
+    roles: ['ADMIN'],
   },
   {
     icon: <ListIcon />,
     name: 'Departments',
     path: '/admin/manage-departments',
+    roles: ['ADMIN'],
   },
   {
     icon: <ListIcon />,
     name: 'Coupons',
     path: '/admin/manage-coupons',
+    roles: ['ADMIN', 'STORE_ATTENDANT'],
+  },
+  {
+    icon: <GridIcon />,
+    name: 'Offer Coupon',
+    path: '/store',
+    roles: ['STORE_ATTENDANT'],
   },
 
   {
     icon: <CarIcon />,
     name: 'Vehicles',
     path: '/admin/manage-vehicles',
+    roles: ['ADMIN'],
 
     // subItems: [{ name: 'Form Elements', path: '/form-elements', pro: false }],
   },
@@ -65,6 +76,7 @@ const navItems: NavItem[] = [
     icon: <User2Icon />,
     name: 'Drivers',
     path: '/admin/manage-drivers',
+    roles: ['ADMIN'],
 
     // subItems: [{ name: 'Form Elements', path: '/form-elements', pro: false }],
   },
@@ -72,6 +84,7 @@ const navItems: NavItem[] = [
     icon: <CircleQuestionMark />,
     name: 'Pending Requests',
     path: '/admin/requests',
+    roles: ['ADMIN'],
 
     // subItems: [{ name: 'Form Elements', path: '/form-elements', pro: false }],
   },
@@ -79,6 +92,7 @@ const navItems: NavItem[] = [
     icon: <ChartBar />,
     name: 'Reports',
     path: '/admin',
+    roles: ['ADMIN'],
 
     // subItems: [{ name: 'Form Elements', path: '/form-elements', pro: false }],
   },
@@ -118,7 +132,7 @@ const othersItems: NavItem[] = [
 const Sidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
-
+  const { session } = useSession();
   const renderMenuItems = (
     navItems: NavItem[],
     menuType: 'main' | 'others'
@@ -163,7 +177,8 @@ const Sidebar: React.FC = () => {
               )}
             </button>
           ) : (
-            nav.path && (
+            nav.path &&
+            nav.roles.includes(session?.role as string) && (
               <Link
                 href={nav.path}
                 className={`menu-item group ${

@@ -201,7 +201,7 @@ function SubmitButton({ isPending }: { isPending: boolean }) {
     <button
       type="submit"
       disabled={isPending}
-      className="bg-green-600 text-white p-2 rounded-md mt-6 w-full disabled:opacity-50"
+      className="inline-flex items-center justify-center gap-2 rounded-lg transition px-4 py-3 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
     >
       {isPending ? 'Creating Request...' : 'Submit Fuel Request'}
     </button>

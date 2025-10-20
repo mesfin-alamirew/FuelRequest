@@ -15,6 +15,13 @@ import PaginationControls from '@/components/ui/PaginationControls'; // New comp
 import SearchBar from './SearchBar';
 import StatusFilter from '@/components/ui/StatusFilter';
 import DeleteRequestButton from './delete-request-button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const prisma = new PrismaClient();
 const ITEMS_PER_PAGE = 10;
@@ -88,100 +95,207 @@ export default async function MyRequestsPage({
 
   return (
     <main className="p-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">My Fuel Requests</h1>
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90 ">
+        My Fuel Requests
+      </h2>
 
       <div className="flex gap-10 items-center mb-6">
         <Link href="/transport" className="text-blue-600 hover:underline">
           &larr; Back to Dashboard
         </Link>
+
         <SearchBar />
         <StatusFilter initialStatus={statusQuery || ''} />
       </div>
 
       {myRequests.length === 0 ? (
-        <p>No matching fuel requests found.</p>
+        <p className="text-base font-medium text-gray-800 dark:text-white/90 ">
+          No matching fuel requests found.
+        </p>
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y text-sm divide-gray-200  bg-white border border-gray-200">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="py-2 px-4 border-b text-left">Request No.</th>
-                  <th className="py-2 px-4 border-b text-left">Vehicle</th>
-                  <th className="py-2 px-4 border-b text-left">Driver</th>
-                  <th className="py-2 px-4 border-b text-left">
-                    Prev Odometer
-                  </th>
-                  <th className="py-2 px-4 border-b text-left">
-                    Current Odometer
-                  </th>
-                  <th className="py-2 px-4 border-b text-left">Difference</th>
-                  <th className="py-2 px-4 border-b text-left">Litres</th>
-                  <th className="py-2 px-4 border-b text-left">Status</th>
-                  <th className="py-2 px-4 border-b text-left">Submitted At</th>
-                  <th className="py-2 px-4 border-b text-left">Quantity</th>
-
-                  <th className="py-2 px-4 border-b text-left">Remark</th>
-                  <th
-                    scope="col"
-                    className="relative px-6 py-3 border-b text-left"
-                  >
-                    <span className="sr-only ">Actions</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {myRequests.map((request) => (
-                  <tr
-                    key={request.id}
-                    className="hover:bg-gray-50 border-b-gray-300 border-b"
-                  >
-                    <td className="py-2 px-4">{request.requestNumber}</td>
-                    <td className="py-2 px-4">{request.vehicle.plate}</td>
-                    <td className="py-2 px-4">{request.driver.name}</td>
-                    <td className="py-2 px-4">{request.previousOdometer}</td>
-                    <td className="py-2 px-4">{request.currentOdometer}</td>
-                    <td className="py-2 px-4">
-                      {request.calculatedDifference}
-                    </td>
-                    <td className="py-2 px-4">
-                      {request.totalLiters.toFixed(2)}
-                    </td>
-                    <td className="py-2 px-4">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          request.status === 'COMPLETED'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+            <div className="max-w-full overflow-x-auto">
+              <div className="min-w-[1102px]">
+                <Table>
+                  <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                    <TableRow>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                       >
-                        {request.status}
-                      </span>
-                    </td>
-                    <td className="py-2 px-4">
-                      {format(request.createdAt, 'yyyy-MM-dd HH:mm')}
-                    </td>
+                        Request No.
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Vehicle
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Driver
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Prev Odometer
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Current Odometer
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Difference
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Litres
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Status
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Submitted At
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Quantity
+                      </TableCell>
 
-                    <td className="py-2 px-4">{request.quantity}</td>
-                    <td className="py-2 px-4">{request.remark}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      {request.status === 'REJECTED' && (
-                        <div className="flex space-x-2">
-                          <Link
-                            href={`/transport/my-requests/${request.id}/edit`}
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Remark
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        <span className="sr-only ">Actions</span>
+                      </TableCell>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                    {myRequests.map((request) => (
+                      <TableRow key={request.id}>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.requestNumber}
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.vehicle.plate}
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.driver.name}
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.previousOdometer}
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.currentOdometer}
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.calculatedDifference}
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.totalLiters.toFixed(2)}
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                              request.status === 'COMPLETED'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}
                           >
-                            <button className="text-blue-600 hover:text-blue-900">
-                              Edit
-                            </button>
-                          </Link>
-                          <DeleteRequestButton requestId={request.id} />
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                            {request.status}
+                          </span>
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {format(request.createdAt, 'yyyy-MM-dd HH:mm')}
+                        </TableCell>
+
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.quantity}
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.remark}
+                        </TableCell>
+                        <TableCell
+                          isHeader
+                          className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                        >
+                          {request.status === 'REJECTED' && (
+                            <div className="flex space-x-2">
+                              <Link
+                                href={`/transport/my-requests/${request.id}/edit`}
+                              >
+                                <button className="text-blue-600 hover:text-blue-900">
+                                  Edit
+                                </button>
+                              </Link>
+                              <DeleteRequestButton requestId={request.id} />
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           </div>
           <PaginationControls
             currentPage={currentPage}
