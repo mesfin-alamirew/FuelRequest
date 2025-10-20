@@ -15,6 +15,13 @@ import Link from 'next/link';
 import PaginationControls from '@/components/ui/PaginationControls';
 import ExportButton from '../balance-report/ExportButton';
 import ReportSearchBar from '../balance-report/ReportSearchBar';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const prisma = new PrismaClient();
 const ITEMS_PER_PAGE = 10; // Reports can show more items per page
@@ -81,7 +88,12 @@ export default async function RequestReportPage({
 
   return (
     <main className="p-8 max-w-6xl mx-auto text-sm">
-      <h1 className="text-2xl font-bold mb-6">Fuel Request Report</h1>
+      <h2
+        className="text-xl font-semibold text-gray-800 dark:text-white/90"
+        x-text="pageName"
+      >
+        Fuel Request Report
+      </h2>
       <div className="mb-6 flex justify-between items-center">
         <Link href="/admin" className="text-blue-600 hover:underline">
           &larr; Back to Admin Dashboard
@@ -95,57 +107,84 @@ export default async function RequestReportPage({
         <p>No requests match the selected filters.</p>
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="py-2 px-4 border-b text-left">Request No.</th>
-                  <th className="py-2 px-4 border-b text-left">Vehicle</th>
-                  <th className="py-2 px-4 border-b text-left">Driver</th>
-                  <th className="py-2 px-4 border-b text-left">Status</th>
-                  <th className="py-2 px-4 border-b text-left">Focal Person</th>
-                  <th className="py-2 px-4 border-b text-left">Odometer</th>
-                  <th className="py-2 px-4 border-b text-left">Litres</th>
-                  <th className="py-2 px-4 border-b text-left">Submitted At</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reportData.map((request) => (
-                  <tr
-                    key={request.id}
-                    className="hover:bg-gray-50 border-b border-b-gray-200"
-                  >
-                    <td className="py-2 px-4">{request.requestNumber}</td>
-                    <td className="py-2 px-4">{request.vehicle.plate}</td>
-                    <td className="py-2 px-4">{request.driver.name}</td>
-                    <td className="py-2 px-4">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          request.status === 'COMPLETED'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {request.status}
-                      </span>
-                    </td>
-                    <td className="py-2 px-4">{request.focalPerson.name}</td>
-                    <td className="py-2 px-4">{request.currentOdometer}</td>
-                    <td className="py-2 px-4">
-                      {request.totalLiters.toFixed(2)}
-                    </td>
-                    <td className="py-2 px-4">
-                      {format(request.createdAt, 'yyyy-MM-dd HH:mm')}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+            <div className="max-w-full overflow-x-auto">
+              <div className="min-w-[1102px]">
+                <Table>
+                  <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                    <TableRow>
+                      <TableCell className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                        Request No.
+                      </TableCell>
+                      <TableCell className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                        Vehicle
+                      </TableCell>
+                      <TableCell className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                        Driver
+                      </TableCell>
+                      <TableCell className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                        Status
+                      </TableCell>
+                      <TableCell className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                        Focal Person
+                      </TableCell>
+                      <TableCell className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                        Odometer
+                      </TableCell>
+                      <TableCell className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                        Litres
+                      </TableCell>
+                      <TableCell className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                        Submitted At
+                      </TableCell>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                    {reportData.map((request) => (
+                      <TableRow key={request.id}>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {request.requestNumber}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {request.vehicle.plate}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {request.driver.name}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                              request.status === 'COMPLETED'
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}
+                          >
+                            {request.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {request.focalPerson.name}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {request.currentOdometer}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {request.totalLiters.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {format(request.createdAt, 'yyyy-MM-dd HH:mm')}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+              />
+            </div>
           </div>
-          <PaginationControls
-            currentPage={currentPage}
-            totalPages={totalPages}
-          />
         </>
       )}
     </main>

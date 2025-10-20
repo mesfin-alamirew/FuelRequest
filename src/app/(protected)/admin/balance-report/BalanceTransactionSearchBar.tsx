@@ -41,15 +41,17 @@ export default function BalanceTransactionSearchBar() {
   return (
     <form
       onSubmit={handleSearch}
-      className="mb-6 p-4 border rounded-lg bg-gray-50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+      className="mb-6 p-4 border rounded-lg dark:border-white/[0.05] dark:bg-white/[0.03] bg-gray-50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
     >
       <div className="flex flex-col">
-        <label className="mb-1">Transaction Type</label>
+        <label className="mb-1.5 dark:text-gray-400 block text-sm font-medium">
+          Transaction Type
+        </label>
         <select
           name="type"
           value={filters.type}
           onChange={handleInputChange}
-          className="border p-2 rounded-md"
+          className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
         >
           <option value="">All Types</option>
           {Object.values(BalanceTransactionType).map((type) => (
@@ -60,23 +62,27 @@ export default function BalanceTransactionSearchBar() {
         </select>
       </div>
       <div className="flex flex-col">
-        <label className="mb-1">Start Date</label>
+        <label className="mb-1.5 dark:text-gray-400 block text-sm font-medium">
+          Start Date
+        </label>
         <input
           type="date"
           name="startDate"
           value={filters.startDate}
           onChange={handleInputChange}
-          className="border p-2 rounded-md"
+          className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
         />
       </div>
       <div className="flex flex-col">
-        <label className="mb-1">End Date</label>
+        <label className="mb-1.5 dark:text-gray-400 block text-sm font-medium">
+          End Date
+        </label>
         <input
           type="date"
           name="endDate"
           value={filters.endDate}
           onChange={handleInputChange}
-          className="border p-2 rounded-md"
+          className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
         />
       </div>
       <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-2 mt-4">

@@ -7,6 +7,13 @@ import Link from 'next/link';
 import ExportButton from '@/components/ExportButton';
 import { exportBalanceReportToCsv } from '@/lib/actions/balance-actions';
 import PaginationControls from '@/components/ui/PaginationControls';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const prisma = new PrismaClient();
 const ITEMS_PER_PAGE = 10;
@@ -71,7 +78,12 @@ export default async function BalanceReportPage({
   });
   return (
     <main className="p-8 max-w-6xl mx-auto text-sm">
-      <h1 className="text-2xl font-bold mb-6">Balance Transaction Report</h1>
+      <h2
+        className="text-xl font-semibold text-gray-800 dark:text-white/90"
+        x-text="pageName"
+      >
+        Balance Transaction Report
+      </h2>
       <div className="mb-6 flex flex-col items-center">
         <Link href="/admin" className="text-blue-600 hover:underline">
           &larr; Back to Admin Dashboard
@@ -84,53 +96,100 @@ export default async function BalanceReportPage({
       </div>
 
       {transactions.length === 0 ? (
-        <p>No transactions match the selected filters.</p>
+        <p className="mb-1.5 dark:text-gray-400 block text-sm font-medium">
+          No transactions match the selected filters.
+        </p>
       ) : (
         <>
           <div className="overflow-x-auto">
             <div className="flex gap-6 p-2 mb-4 bg-gray-600 text-white">
-              <p>Total Coupon Delivered: {couponDelivered}</p>
-              <p>Top Up: {topUp}</p>
-              <p>Current Balance: {balance?.currentAmount}</p>
+              <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
+                Total Coupon Delivered: {couponDelivered}
+              </p>
+              <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
+                Top Up: {topUp}
+              </p>
+              <p className="text-sm font-semibold text-gray-800 dark:text-white/90">
+                Current Balance: {balance?.currentAmount}
+              </p>
             </div>
-            <table className="min-w-full bg-white border border-gray-200 text-sm">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="py-2 px-4 border-b text-left">Request#</th>
-                  <th className="py-2 px-4 border-b text-left">Type</th>
-                  <th className="py-2 px-4 border-b text-left">Amount</th>
-                  <th className="py-2 px-4 border-b text-left">User</th>
-                  <th className="py-2 px-4 border-b text-left">Date</th>
-                  <th className="py-2 px-4 border-b text-left">Details</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((t) => (
-                  <tr key={t.id}>
-                    <td className="py-2 px-4 border-b">
-                      {t.type === 'COUPON_DEDUCTION'
-                        ? t.couponDelivery?.fuelRequest.requestNumber
-                        : 0}
-                    </td>
-                    <td className="py-2 px-4 border-b">{t.type}</td>
-                    <td className="py-2 px-4 border-b">
-                      {t.amount.toFixed(2)}
-                    </td>
-                    <td className="py-2 px-4 border-b">{t.user.name}</td>
-                    <td className="py-2 px-4 border-b">
-                      {format(t.createdAt, 'yyyy-MM-dd HH:mm')}
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      {t.type === BalanceTransactionType.COUPON_DEDUCTION &&
-                        t.couponDelivery &&
-                        `Coupon for Request #${t.couponDelivery.fuelRequest.requestNumber} (${t.couponDelivery.fuelRequest.vehicle.plate})`}
-                      {t.type === BalanceTransactionType.TOP_UP &&
-                        `Funds added`}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+              <div className="max-w-full overflow-x-auto">
+                <div className="min-w-[1102px]"></div>
+                <Table>
+                  <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                    <TableRow>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Request#
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Type
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Amount
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        User
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Date
+                      </TableCell>
+                      <TableCell
+                        isHeader
+                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                      >
+                        Details
+                      </TableCell>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                    {transactions.map((t) => (
+                      <TableRow key={t.id}>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {t.type === 'COUPON_DEDUCTION'
+                            ? t.couponDelivery?.fuelRequest.requestNumber
+                            : 0}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {t.type}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {t.amount.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {t.user.name}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {format(t.createdAt, 'yyyy-MM-dd HH:mm')}
+                        </TableCell>
+                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                          {t.type === BalanceTransactionType.COUPON_DEDUCTION &&
+                            t.couponDelivery &&
+                            `Coupon for Request #${t.couponDelivery.fuelRequest.requestNumber} (${t.couponDelivery.fuelRequest.vehicle.plate})`}
+                          {t.type === BalanceTransactionType.TOP_UP &&
+                            `Funds added`}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           </div>
           <PaginationControls
             currentPage={currentPage}
