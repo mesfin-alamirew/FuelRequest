@@ -103,7 +103,7 @@ export default async function StorePage({
         <SearchBar />
         <StatusFilter initialStatus={statusQuery || ''} />
       </div>
-      <h2 className="text-2xl font-semibold mb-4">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
         {statusQuery ? `${statusQuery} Fuel Requests` : 'Pending Fuel Requests'}
       </h2>
       {pendingRequests.length === 0 ? (
