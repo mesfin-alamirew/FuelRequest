@@ -335,18 +335,20 @@ export default function UserManagementTable({
                   </TableCell>
 
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    <button
-                      onClick={() => setEditingUserId(user.id)}
-                      className="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteUser(user.id)}
-                      className="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
-                    >
-                      Delete
-                    </button>
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => setEditingUserId(user.id)}
+                        className="text-blue-600 hover:text-blue-900 cursor-pointer"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="text-red-600 hover:text-red-900 cursor-pointer"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
