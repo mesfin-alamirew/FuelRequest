@@ -145,7 +145,7 @@ export default function ReportSearchBar({
           className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
         />
       </div>
-      <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-2 mt-4">
+      <div className="md:col-span-2 lg:col-span-3 flex justify-start gap-2 mt-4">
         <button
           type="submit"
           disabled={isPending}
