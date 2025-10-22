@@ -111,15 +111,15 @@ export default function VehicleManagementTable({
               </TableBody>
             </Table>
           </div>
-          {editingVehicleId && (
-            <EditVehicleForm
-              vehicle={vehicles.find((v) => v.id === editingVehicleId)!}
-              onCancel={() => setEditingVehicleId(null)}
-              onVehicleUpdated={handleVehicleUpdated}
-            />
-          )}
         </div>
       </div>
+      {editingVehicleId && (
+        <EditVehicleForm
+          vehicle={vehicles.find((v) => v.id === editingVehicleId)!}
+          onCancel={() => setEditingVehicleId(null)}
+          onVehicleUpdated={handleVehicleUpdated}
+        />
+      )}
     </>
   );
 }

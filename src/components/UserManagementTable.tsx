@@ -15,6 +15,7 @@ import { Select } from '@/components/ui/Select';
 import { User, Department, RoleEnum } from '@prisma/client';
 
 import { Table, TableBody, TableCell, TableHeader, TableRow } from './ui/table';
+import { useTheme } from '@/providers/ThemeContext';
 
 type UserWithDepartment = User & { department: Department | null };
 
@@ -37,11 +38,14 @@ function EditUserForm({
   onCancel: () => void;
   onUserUpdated: () => Promise<void>;
 }) {
+  const { theme } = useTheme();
   const [state, formAction] = useActionState<FormState, FormData>(
     async (_previousState, formData) => {
       try {
         await updateUser(user.id, formData);
-        toast.success('User updated successfully!');
+        toast.success('User updated successfully!', {
+          theme: theme === 'dark' ? 'dark' : 'light', // Apply theme dynamically
+        });
         await onUserUpdated();
         onCancel();
         return { success: true };
@@ -50,7 +54,9 @@ function EditUserForm({
         if (error instanceof Error) {
           errorMessage = error.message;
         }
-        toast.error(errorMessage);
+        toast.error(errorMessage, {
+          theme: theme === 'dark' ? 'dark' : 'light', // Apply theme dynamically
+        });
         return { error: errorMessage };
       }
     },
@@ -59,13 +65,16 @@ function EditUserForm({
   const { pending } = useFormStatus();
 
   return (
-    <form action={formAction} className="mt-4 space-y-4">
-      <h3 className="text-lg font-semibold">Edit User: {user.name}</h3>
+    <form action={formAction} className="mt-4 space-y-4 p-4">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
+        Edit User: {user.name}
+      </h2>
       <Input
         name="name"
         defaultValue={user.name}
         placeholder="Full Name"
         required
+        className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
       />
       <Input
         name="email"
@@ -73,36 +82,95 @@ function EditUserForm({
         placeholder="Email Address"
         type="email"
         required
+        className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
       />
-      <Select name="role" defaultValue={user.role} required>
-        {Object.values(RoleEnum).map((role) => (
-          <option key={role} value={role}>
-            {role}
-          </option>
-        ))}
-      </Select>
-      <Select name="departmentId" defaultValue={user.departmentId || ''}>
-        <option value="">Select Department (Optional)</option>
-        {departments.map((dept) => (
-          <option key={dept.id} value={dept.id}>
-            {dept.name}
-          </option>
-        ))}
-      </Select>
+      <div className="relative z-20 bg-transparent">
+        <Select
+          name="role"
+          defaultValue={user.role}
+          required
+          className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
+        >
+          {Object.values(RoleEnum).map((role) => (
+            <option
+              key={role}
+              value={role}
+              className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
+            >
+              {role}
+            </option>
+          ))}
+        </Select>
+        <span className="pointer-events-none absolute top-1/2 right-4 z-30 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+          <svg
+            className="stroke-current"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396"
+              stroke=""
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            ></path>
+          </svg>
+        </span>
+      </div>
+      <div className="relative z-20 bg-transparent">
+        <Select
+          name="departmentId"
+          defaultValue={user.departmentId || ''}
+          className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
+        >
+          <option value="">Select Department (Optional)</option>
+          {departments.map((dept) => (
+            <option
+              key={dept.id}
+              value={dept.id}
+              className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
+            >
+              {dept.name}
+            </option>
+          ))}
+        </Select>
+        <span className="pointer-events-none absolute top-1/2 right-4 z-30 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+          <svg
+            className="stroke-current"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396"
+              stroke=""
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            ></path>
+          </svg>
+        </span>
+      </div>
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={pending}
-          className={`px-4 py-2 text-sm font-medium rounded-md text-white transition-colors ${
-            pending ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
-          }`}
+          className="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
+          // className={`px-4 py-2 text-sm font-medium rounded-md text-white transition-colors ${
+          //   pending ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
+          // }`}
         >
           {pending ? 'Updating...' : 'Update User'}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300"
+          className="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
         >
           Cancel
         </button>
@@ -118,11 +186,14 @@ function AddUserForm({
   departments: Department[];
   onUserAdded: () => Promise<void>;
 }) {
+  const { theme } = useTheme();
   const [state, formAction] = useFormState<FormState, FormData>(
     async (_previousState, formData) => {
       try {
         await createUser(formData);
-        toast.success('User created successfully!');
+        toast.success('User created successfully!', {
+          theme: theme === 'dark' ? 'dark' : 'light', // Apply theme dynamically
+        });
         await onUserAdded(); // <-- Call parent function to refresh state
         return { success: true };
       } catch (error: unknown) {
@@ -130,7 +201,9 @@ function AddUserForm({
         if (error instanceof Error) {
           errorMessage = error.message;
         }
-        toast.error(errorMessage);
+        toast.error(errorMessage, {
+          theme: theme === 'dark' ? 'dark' : 'light', // Apply theme dynamically
+        });
         return { error: errorMessage };
       }
     },
@@ -165,9 +238,10 @@ function AddUserForm({
       <button
         type="submit"
         disabled={pending}
-        className={`px-6 py-2 text-sm font-medium rounded-md text-white transition-colors ${
-          pending ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
-        }`}
+        className="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
+        // className={`px-6 py-2 text-sm font-medium rounded-md text-white transition-colors ${
+        //   pending ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
+        // }`}
       >
         {pending ? 'Adding...' : 'Add User'}
       </button>
@@ -179,6 +253,7 @@ export default function UserManagementTable({
   initialUsers,
   departments,
 }: UserManagementTableProps) {
+  const { theme } = useTheme();
   const [users, setUsers] = useState(initialUsers);
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
 
@@ -197,10 +272,14 @@ export default function UserManagementTable({
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         await deleteUser(userId);
-        toast.success('User deleted successfully!');
+        toast.success('User deleted successfully!', {
+          theme: theme === 'dark' ? 'dark' : 'light', // Apply theme dynamically
+        });
         handleUserAdded(); // Refresh list after deletion
       } catch (error) {
-        toast.error('Failed to delete user.');
+        toast.error('Failed to delete user.', {
+          theme: theme === 'dark' ? 'dark' : 'light', // Apply theme dynamically
+        });
       }
     }
   };
@@ -258,13 +337,13 @@ export default function UserManagementTable({
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     <button
                       onClick={() => setEditingUserId(user.id)}
-                      className="text-indigo-600 hover:text-indigo-900 mr-4"
+                      className="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDeleteUser(user.id)}
-                      className="text-red-600 hover:text-red-900"
+                      className="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
                     >
                       Delete
                     </button>
@@ -286,157 +365,3 @@ export default function UserManagementTable({
     </div>
   );
 }
-
-// // src/app/admin/manage-users/components/UserManagementTable.tsx
-// 'use client';
-
-// import { useState } from 'react';
-// import { useFormState, useFormStatus } from 'react-dom';
-// import { toast } from 'react-toastify';
-// import { createUser, deleteUser, fetchUsers } from '@/app/actions/admin';
-// import { Input } from '@/components/ui/Input';
-// import { Select } from '@/components/ui/Select';
-// import type { User, Department } from '@prisma/client';
-// import { RoleEnum } from '@prisma/client'; // <-- FIX: Change `import type` to `import`
-
-// type UserManagementTableProps = {
-//   initialUsers: (User & { department: Department | null })[];
-//   departments: Department[];
-// };
-
-// type FormState = { success?: boolean; error?: string } | null;
-
-// function AddUserForm({
-//   departments,
-//   onUserAdded,
-// }: {
-//   departments: Department[];
-//   onUserAdded: () => Promise<void>;
-// }) {
-//   const [state, formAction] = useFormState<FormState, FormData>(
-//     async (_previousState, formData) => {
-//       try {
-//         await createUser(formData);
-//         toast.success('User created successfully!');
-//         await onUserAdded(); // <-- Call parent function to refresh state
-//         return { success: true };
-//       } catch (error: unknown) {
-//         let errorMessage = 'Failed to create user.';
-//         if (error instanceof Error) {
-//           errorMessage = error.message;
-//         }
-//         toast.error(errorMessage);
-//         return { error: errorMessage };
-//       }
-//     },
-//     null
-//   );
-//   const { pending } = useFormStatus();
-
-//   return (
-//     <form action={formAction} className="mt-8 space-y-4">
-//       <h2 className="text-xl font-semibold text-gray-800">Add New User</h2>
-//       <Input name="name" placeholder="Full Name" required />
-//       <Input name="email" placeholder="Email Address" type="email" required />
-//       <Select name="role" required>
-//         <option value="">Select Role</option>
-//         {Object.values(RoleEnum).map((role) => (
-//           <option key={role} value={role}>
-//             {role}
-//           </option>
-//         ))}
-//       </Select>
-//       <Select name="departmentId">
-//         <option value="">Select Department (Optional)</option>
-//         {departments.map((dept) => (
-//           <option key={dept.id} value={dept.id}>
-//             {dept.name}
-//           </option>
-//         ))}
-//       </Select>
-//       <button
-//         type="submit"
-//         disabled={pending}
-//         className={`px-6 py-2 text-sm font-medium rounded-md text-white transition-colors ${
-//           pending ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'
-//         }`}
-//       >
-//         {pending ? 'Adding...' : 'Add User'}
-//       </button>
-//     </form>
-//   );
-// }
-
-// export default function UserManagementTable({
-//   initialUsers,
-//   departments,
-// }: UserManagementTableProps) {
-//   const [users, setUsers] = useState(initialUsers);
-
-//   const handleUserAdded = async () => {
-//     try {
-//       const updatedUsers = await fetchUsers();
-//       setUsers(updatedUsers);
-//     } catch (error) {
-//       console.error('Failed to re-fetch users:', error);
-//       toast.error('Failed to update user list.');
-//     }
-//   };
-//   return (
-//     <div>
-//       <div className="bg-white p-6 rounded-lg shadow-md">
-//         <div className="overflow-x-auto">
-//           <table className="min-w-full divide-y divide-gray-200">
-//             <thead className="bg-gray-50">
-//               <tr>
-//                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-//                   Name
-//                 </th>
-//                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-//                   Email
-//                 </th>
-//                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-//                   Role
-//                 </th>
-//                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-//                   Department
-//                 </th>
-//               </tr>
-//             </thead>
-//             <tbody className="bg-white divide-y divide-gray-200">
-//               {users.map((user) => (
-//                 <tr key={user.id}>
-//                   <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
-//                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-//                   <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
-//                   <td className="px-6 py-4 whitespace-nowrap">
-//                     {user.department?.name || 'N/A'}
-//                   </td>
-//                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-//                     <button
-//                       onClick={() => {
-//                         /* handle edit */
-//                       }}
-//                       className="text-indigo-600 hover:text-indigo-900 mr-4"
-//                     >
-//                       Edit
-//                     </button>
-//                     <form action={() => deleteUser(user.id)} className="inline">
-//                       <button
-//                         type="submit"
-//                         className="text-red-600 hover:text-red-900"
-//                       >
-//                         Delete
-//                       </button>
-//                     </form>
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </div>
-//       </div>
-//       <AddUserForm departments={departments} onUserAdded={handleUserAdded} />
-//     </div>
-//   );
-// }

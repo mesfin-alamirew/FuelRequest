@@ -106,15 +106,15 @@ export default function DriverManagementTable({
               </TableBody>
             </Table>
           </div>
-          {editingDriverId && (
-            <EditDriverForm
-              driver={drivers.find((v) => v.id === editingDriverId)!}
-              onCancel={() => setEditingDriverId(null)}
-              onDriverUpdated={handleDriverUpdated}
-            />
-          )}
         </div>
       </div>
+      {editingDriverId && (
+        <EditDriverForm
+          driver={drivers.find((v) => v.id === editingDriverId)!}
+          onCancel={() => setEditingDriverId(null)}
+          onDriverUpdated={handleDriverUpdated}
+        />
+      )}
     </>
   );
 }

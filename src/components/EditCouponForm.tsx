@@ -59,7 +59,7 @@ export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
           type="text"
           id="couponNumber"
           name="couponNumber"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+          className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden sm:w-[300px] sm:min-w-[300px] dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
           defaultValue={coupon.couponNumber}
           required
         />
@@ -81,7 +81,7 @@ export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
           type="number"
           id="priceValue"
           name="priceValue"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+          className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pr-4 pl-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden sm:w-[300px] sm:min-w-[300px] dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
           defaultValue={coupon.priceValue}
           required
           step="0.01"
@@ -103,7 +103,7 @@ export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
         />
         <label
           htmlFor="isDelivered"
-          className="ml-2 block text-sm text-gray-900"
+          className="ml-2 text-sm font-medium text-gray-800 dark:text-gray-200"
         >
           Is Delivered
         </label>
@@ -112,14 +112,14 @@ export default function EditCouponForm({ coupon }: { coupon: Coupon }) {
       <div className="flex space-x-4">
         <button
           type="submit"
-          className="px-4 py-2 text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+          className="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
         >
           Update Coupon
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300"
+          className="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
         >
           Cancel
         </button>

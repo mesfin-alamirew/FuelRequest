@@ -22,7 +22,9 @@ export default async function EditCouponPage({
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Edit Coupon</h1>
+      <h1 className="text-base font-medium text-gray-800 dark:text-white/90 mb-4">
+        Edit Coupon
+      </h1>
       <EditCouponForm coupon={coupon} />
     </div>
   );
