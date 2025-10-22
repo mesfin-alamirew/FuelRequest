@@ -41,9 +41,9 @@ export default function BalanceTransactionSearchBar() {
   return (
     <form
       onSubmit={handleSearch}
-      className="mb-6 p-4 border rounded-lg dark:border-white/[0.05] dark:bg-white/[0.03] bg-gray-50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+      className="mb-6 p-4 border rounded-lg dark:border-white/[0.05] dark:bg-white/[0.03] bg-gray-50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col relative z-20 bg-transparent">
         <label className="mb-1.5 dark:text-gray-400 block text-sm font-medium">
           Transaction Type
         </label>
@@ -51,15 +51,42 @@ export default function BalanceTransactionSearchBar() {
           name="type"
           value={filters.type}
           onChange={handleInputChange}
-          className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          className="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
         >
-          <option value="">All Types</option>
+          <option
+            value=""
+            className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
+          >
+            All Types
+          </option>
           {Object.values(BalanceTransactionType).map((type) => (
-            <option key={type} value={type}>
+            <option
+              key={type}
+              value={type}
+              className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
+            >
               {type}
             </option>
           ))}
         </select>
+        <span className="pointer-events-none absolute top-2/3 right-4 z-30 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+          <svg
+            className="stroke-current"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396"
+              stroke=""
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            ></path>
+          </svg>
+        </span>
       </div>
       <div className="flex flex-col">
         <label className="mb-1.5 dark:text-gray-400 block text-sm font-medium">
@@ -85,7 +112,7 @@ export default function BalanceTransactionSearchBar() {
           className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
         />
       </div>
-      <div className="md:col-span-2 lg:col-span-3 flex justify-end gap-2 mt-4">
+      <div className="md:col-span-2 lg:col-span-3 flex justify-start gap-2 mt-4">
         <button
           type="submit"
           disabled={isPending}

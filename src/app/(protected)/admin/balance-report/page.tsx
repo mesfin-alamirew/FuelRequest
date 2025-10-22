@@ -84,17 +84,16 @@ export default async function BalanceReportPage({
       >
         Balance Transaction Report
       </h2>
-      <div className="mb-6 flex flex-col items-center">
+      <div className="mb-6 flex flex-col">
         <Link href="/admin" className="text-blue-600 hover:underline">
           &larr; Back to Admin Dashboard
         </Link>
-        <BalanceTransactionSearchBar />
-        <ExportButton
-          exportAction={exportBalanceReportToCsv}
-          fileName="balance-report.csv"
-        />
       </div>
-
+      <BalanceTransactionSearchBar />
+      <ExportButton
+        exportAction={exportBalanceReportToCsv}
+        fileName="balance-report.csv"
+      />
       {transactions.length === 0 ? (
         <p className="mb-1.5 dark:text-gray-400 block text-sm font-medium">
           No transactions match the selected filters.
