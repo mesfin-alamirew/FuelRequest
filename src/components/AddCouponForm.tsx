@@ -41,7 +41,7 @@ export default function AddCouponForm({
   return (
     <form
       action={formAction}
-      className="mt-8 space-y-4 border p-4 border-gray-200 rounded-2xl"
+      className="space-y-4 border p-4 border-gray-200 rounded-2xl"
     >
       {state?.error && (
         <div className="p-4 rounded-md bg-red-100 text-red-700">

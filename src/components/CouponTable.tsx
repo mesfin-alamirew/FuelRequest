@@ -192,65 +192,62 @@ export default function CouponTable({
             </Table>
           </div>
         </div>
-
-        {/* Pagination controls */}
-        <div className="flex justify-center mt-8 space-x-2">
-          <form action={formAction}>
-            <input
-              type="hidden"
-              name="page"
-              value={paginationState.currentPage - 1}
-            />
-            <input
-              type="hidden"
-              name="query"
-              value={searchParams.get('query') || ''}
-            />
-            <input type="hidden" name="pageSize" value={10} />
-            <button
-              type="submit"
-              disabled={paginationState.currentPage <= 1}
-              className=" px-4 py-2  bg-blue-600 text-white rounded disabled:opacity-50"
-            >
-              Previous
-            </button>
-          </form>
-          {pages.map((page) => (
-            <button
-              key={page}
-              onClick={() => handlePageChange(page)}
-              className={`px-4 py-2 rounded-md ${
-                page === paginationState.currentPage
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-300 text-gray-700 cursor-pointer'
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-          <form action={formAction}>
-            <input
-              type="hidden"
-              name="page"
-              value={paginationState.currentPage + 1}
-            />
-            <input
-              type="hidden"
-              name="query"
-              value={searchParams.get('query') || ''}
-            />
-            <input type="hidden" name="pageSize" value={10} />
-            <button
-              type="submit"
-              disabled={
-                paginationState.currentPage >= paginationState.totalPages
-              }
-              className=" px-4 py-2  bg-blue-600 text-white rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </form>
-        </div>
+      </div>
+      {/* Pagination controls */}
+      <div className="flex justify-center mt-8 space-x-2">
+        <form action={formAction}>
+          <input
+            type="hidden"
+            name="page"
+            value={paginationState.currentPage - 1}
+          />
+          <input
+            type="hidden"
+            name="query"
+            value={searchParams.get('query') || ''}
+          />
+          <input type="hidden" name="pageSize" value={10} />
+          <button
+            type="submit"
+            disabled={paginationState.currentPage <= 1}
+            className=" px-4 py-2  bg-blue-600 text-white rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+        </form>
+        {pages.map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={`px-4 py-2 rounded-md ${
+              page === paginationState.currentPage
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-300 text-gray-700 cursor-pointer'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+        <form action={formAction}>
+          <input
+            type="hidden"
+            name="page"
+            value={paginationState.currentPage + 1}
+          />
+          <input
+            type="hidden"
+            name="query"
+            value={searchParams.get('query') || ''}
+          />
+          <input type="hidden" name="pageSize" value={10} />
+          <button
+            type="submit"
+            disabled={paginationState.currentPage >= paginationState.totalPages}
+            className=" px-4 py-2  bg-blue-600 text-white rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </form>
       </div>
     </>
   );

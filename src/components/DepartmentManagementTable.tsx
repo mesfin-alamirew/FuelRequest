@@ -115,7 +115,7 @@ function AddDepartmentForm({
   return (
     <form
       action={formAction}
-      className="mt-8 space-y-4 border p-2 border-gray-200 rounded-2xl"
+      className="space-y-4 border p-2 border-gray-200 rounded-2xl"
     >
       <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
         Add New Department
