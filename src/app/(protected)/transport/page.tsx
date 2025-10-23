@@ -25,7 +25,9 @@ export default async function TransportPage({
   return (
     <main className="px-8 max-w-4xl mx-auto text-sm">
       <div className="flex items-center justify-between p-2 mb-1 border-b-2 border-b-gray-200">
-        <h1 className="font-bold">Fuel Request Form</h1>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
+          Fuel Request Form
+        </h2>
 
         <Link
           href="/transport/my-requests"
@@ -34,13 +36,21 @@ export default async function TransportPage({
           View My Requests
         </Link>
       </div>
-      <section className="mb-8">
-        <h2 className="text-sm font-semibold mb-4">Select Vehicle</h2>
+      <section className="mb-8 pt-4 flex gap-4 flex-col">
+        <h2 className="text-sm  mb-4 font-semibold text-gray-800 dark:text-white/90">
+          Select Vehicle
+        </h2>
         <VehicleSelectForm vehicles={vehicles} /> {/* Use new component */}
       </section>
 
       {plate && (
-        <Suspense fallback={<div>Loading vehicle details...</div>}>
+        <Suspense
+          fallback={
+            <div className="text-base font-medium text-gray-800 dark:text-white/90">
+              Loading vehicle details...
+            </div>
+          }
+        >
           <VehicleDetails
             vehiclePlate={plate}
             drivers={drivers}
@@ -67,9 +77,9 @@ async function VehicleDetails({
   let liter;
   if (!vehicle) {
     return (
-      <p className="text-red-500">
+      <h2 className="text-base font-medium text-gray-800 dark:text-white/90">
         Vehicle with plate {vehiclePlate} not found.
-      </p>
+      </h2>
     );
   } else {
     const fuelPrice = await prisma.fuelPrice.findFirst({

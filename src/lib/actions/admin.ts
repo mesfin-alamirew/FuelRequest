@@ -576,7 +576,8 @@ export async function updateUser(userId: number, formData: FormData) {
       where: { id: userId },
       data: { name, email, role, departmentId },
     });
-    revalidatePath('/admin/manage-users');
+
+    // revalidatePath('/admin/manage-users');
   } catch (error: unknown) {
     if (
       error instanceof PrismaClientKnownRequestError &&
@@ -586,6 +587,7 @@ export async function updateUser(userId: number, formData: FormData) {
     }
     throw new Error('Failed to update user.');
   }
+  redirect('/');
 }
 
 /**
