@@ -47,8 +47,12 @@ export default async function StorePage({
   if (!session || session.role !== 'STORE_ATTENDANT') {
     return (
       <main className="p-8 max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Access Denied</h1>
-        <p>You do not have permission to view this page.</p>
+        <h1 className="text-base font-medium text-gray-800 dark:text-white/90 ">
+          Access Denied
+        </h1>
+        <p className="mb-6 mt-10 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
+          You do not have permission to view this page.
+        </p>
       </main>
     );
   }
@@ -57,8 +61,12 @@ export default async function StorePage({
   if (isNaN(focalPersonId)) {
     return (
       <main className="p-8 max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Error</h1>
-        <p>Invalid user session. Please log in again.</p>
+        <h1 className="text-base font-medium text-gray-800 dark:text-white/90 ">
+          Error
+        </h1>
+        <p className="mb-6 mt-10 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
+          Invalid user session. Please log in again.
+        </p>
       </main>
     );
   }
@@ -107,9 +115,9 @@ export default async function StorePage({
         {statusQuery ? `${statusQuery} Fuel Requests` : 'Pending Fuel Requests'}
       </h2>
       {pendingRequests.length === 0 ? (
-        <p className="text-base font-medium text-gray-800 dark:text-white/90 ">
+        <h2 className="text-base font-medium text-gray-800 dark:text-white/90 ">
           No pending fuel requests found.
-        </p>
+        </h2>
       ) : (
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
           <div className="max-w-full overflow-x-auto">
