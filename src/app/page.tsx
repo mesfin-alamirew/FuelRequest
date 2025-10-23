@@ -11,11 +11,11 @@ export default async function HomePage() {
   return (
     <>
       <main className="flex min-h-screen flex-col items-center justify-center p-24">
-        <h1 className=" text-xl sm:text-4xl font-bold mb-8">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
           FUEL REQUISITION MANAGEMENT SYSTEM
-        </h1>
+        </h2>
         {session ? (
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 mt-10">
             {session.role === 'TRANSPORT_FOCAL' && (
               <div className="relative  min-h-72  w-[300px] px-4 py-5 bg-red-100 flex flex-col gap-3 rounded-md shadow-[0px_0px_15px_rgba(0,0,0,0.09)]">
                 <div className="flex gap-4 flex-col">
