@@ -2,6 +2,7 @@
 import PageBreadcrumb from '@/components/PageBreadCrumb';
 import { getAuthSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import TinyBarChart from './TinyBarChart';
 
 export default async function DashboardPage() {
   // Await the function call to get the session object
@@ -136,6 +137,25 @@ export default async function DashboardPage() {
               </p>
             </div>
           </article>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 mt-10">
+        <div className="space-y-6 lg:col-span-2">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/3">
+            <div className="flex items-center justify-between gap-5">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+                  Delivery Statistics
+                </h3>
+                <p className="dark:text-gray-40 text-sm text-gray-500">
+                  Total number of deliveries 70.5K
+                </p>
+              </div>
+            </div>
+            <div className="h-[265px] w-full">
+              <TinyBarChart />
+            </div>
+          </div>
         </div>
       </div>
     </div>
