@@ -52,8 +52,8 @@ const TinyBarChart = () => {
     <BarChart
       style={{
         width: '100%',
-        // maxWidth: '300px',
-        // maxHeight: '100px',
+        maxWidth: '800px',
+        maxHeight: '250px',
         aspectRatio: 1.618,
       }}
       responsive
