@@ -15,7 +15,6 @@ import { revalidatePath } from 'next/cache';
 import { getAuthSession } from '@/lib/auth';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { redirect } from 'next/navigation';
-import { promises } from 'node:dns';
 
 const prisma = new PrismaClient();
 

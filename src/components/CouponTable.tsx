@@ -171,20 +171,24 @@ export default function CouponTable({
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                      <div className="flex gap-4">
-                        <Link href={`/admin/manage-coupons/${coupon.id}/edit`}>
-                          <button className="text-blue-600 hover:text-blue-900 cursor-pointer">
-                            Edit
-                          </button>
-                        </Link>
-                        <Link href={`/coupons/${coupon.id}/edit`}>
-                          <button className="text-red-600 hover:text-red-900 cursor-pointer">
-                            Delete
-                          </button>
-                        </Link>
-                      </div>
-                    </TableCell>
+                    {!coupon.isDelivered && (
+                      <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                        <div className="flex gap-4">
+                          <Link
+                            href={`/admin/manage-coupons/${coupon.id}/edit`}
+                          >
+                            <button className="text-blue-600 hover:text-blue-900 cursor-pointer">
+                              Edit
+                            </button>
+                          </Link>
+                          <Link href={`/coupons/${coupon.id}/edit`}>
+                            <button className="text-red-600 hover:text-red-900 cursor-pointer">
+                              Delete
+                            </button>
+                          </Link>
+                        </div>
+                      </TableCell>
+                    )}
                     <td className="px-6 py-4 whitespace-nowrap"></td>
                   </TableRow>
                 ))}

@@ -1,5 +1,5 @@
 // src/app/dashboard/page.tsx
-import PageBreadcrumb from '@/components/PageBreadCrumb';
+
 import { getAuthSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import TinyBarChart from './TinyBarChart';

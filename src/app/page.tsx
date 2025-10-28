@@ -1,7 +1,7 @@
 // src/app/page.tsx
 
 import { AuthButtons } from '@/components/AuthButtons';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+
 import { getAuthSession } from '@/lib/auth';
 import Link from 'next/link';
 
