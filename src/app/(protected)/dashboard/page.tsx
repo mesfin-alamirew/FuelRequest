@@ -14,7 +14,7 @@ export default async function DashboardPage() {
     redirect('/');
   }
 
-  if (!session || session.role !== 'STORE_ATTENDANT') {
+  if (!session || session.role !== 'ADMIN') {
     return (
       <main className="p-8 max-w-6xl mx-auto">
         <h1 className="text-base font-medium text-gray-800 dark:text-white/90 ">
