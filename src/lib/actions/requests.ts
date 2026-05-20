@@ -69,60 +69,100 @@ function redirectWithToast(
   path: string,
   type: string,
   message: string,
-  existingSearchParams?: URLSearchParams
+  existingSearchParams?: URLSearchParams,
 ) {
   const params = existingSearchParams || new URLSearchParams();
   params.set('toast', type);
   params.set('message', message);
   redirect(`${path}?${params.toString()}`);
 }
-
 function generateNextRequestNumber(prevRequestNumber: string): string {
-  const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear().toString();
 
-  // Format prevNumber in YYYY-NNNN if it has a value 1
-  const formattedPrevNumber =
-    prevRequestNumber === '0'
-      ? `${currentYear.toString()} - ${prevRequestNumber}`
-      : prevRequestNumber;
-  // 1. Split the string to get the numeric part and the year.
-  const parts = formattedPrevNumber.split('-');
+  // Handle first request
+  if (!prevRequestNumber || prevRequestNumber === '0') {
+    return `${currentYear}-0001`;
+  }
 
-  // Check if the input format is valid.
-  if (parts.length !== 2) {
+  // Expected format: YYYY-NNNN
+  const match = prevRequestNumber.match(/^(\d{4})-(\d+)$/);
+
+  if (!match) {
     throw new Error(
-      'Invalid request number format. Expected format: "YYYY-NNNN"'
+      'Invalid request number format. Expected format: "YYYY-NNNN"',
     );
   }
 
-  const numericPart = parts[1];
-  const prevYear = parts[0];
+  const [, prevYear, prevSequence] = match;
 
-  // Check if the year in the previous request number is the current year.
-  // If not, you might want to reset the sequence, but for now, we'll assume it's the same year.
-  if (prevYear !== String(currentYear)) {
-    console.warn(
-      `The previous year (${prevYear}) does not match the current year (${currentYear}). The sequence will continue with the new year.`
-    );
+  // Reset sequence if year changed
+  if (prevYear !== currentYear) {
+    return `${currentYear}-0001`;
   }
 
-  // 2. Convert to number and increment.
-  const nextNumber = parseInt(numericPart, 10) + 1;
-  const paddingLength = numericPart.length;
+  // Increment sequence
+  const nextSequence = (parseInt(prevSequence, 10) + 1)
+    .toString()
+    .padStart(prevSequence.length, '0');
 
-  // 3. Pad the new number with leading zeros to match the original length.
-  const nextNumericPart = String(nextNumber).padStart(paddingLength, '0');
-
-  // 4. Combine the year with the new padded number.
-  const nextRequestNumber = `${currentYear}-${nextNumericPart}`;
-
-  return nextRequestNumber;
+  return `${currentYear}-${nextSequence}`;
 }
+// function generateNextRequestNumber(prevRequestNumber: string): string {
+//   const currentYear = new Date().getFullYear();
+//   // TODO: Handle edge cases for the first request of the year or if the previous request number is in an unexpected format. For example, if prevRequestNumber is "0" (initial state) or if it's from a previous year, we should reset to "YYYY-0001".
+//   // The intention is to generate a request number in the
+//   // form "YYYY-nn", where YYYY is the current year, and nn is sequence number next to the
+//   // previous number. Currently it works but it doesn't rest to 1 if YYYY changes.
+//   // The goal is to reset nn to 1 if YYYY changes.
+
+//   // Handle the case where there is a change in year and the previous request number is from the last year, or if it's the initial starting number which might be "0"
+//   // If prevRequestNumber is "0", we can treat it as if there were no previous requests and start with "YYYY-0001"
+//   // If prevRequestNumber is from a previous year, we can also reset the sequence to "YYYY-0001" for the new year. For simplicity,
+//   //  we'll just increment the number regardless of the year, but you can add logic to reset it if needed.
+
+//   // Format prevNumber in YYYY-NNNN if it has a value 1
+//   const formattedPrevNumber =
+//     prevRequestNumber === '0'
+//       ? `${currentYear.toString()} - ${prevRequestNumber}`
+//       : prevRequestNumber;
+//   // 1. Split the string to get the numeric part and the year.
+//   const parts = formattedPrevNumber.split('-');
+
+//   // Check if the input format is valid.
+//   if (parts.length !== 2) {
+//     throw new Error(
+//       'Invalid request number format. Expected format: "YYYY-NNNN"',
+//     );
+//   }
+
+//   const numericPart = parts[1];
+//   const prevYear = parts[0];
+
+//   // Check if the year in the previous request number is the current year.
+//   // If not, you might want to reset the sequence, but for now, we'll assume it's the same year.
+//   if (prevYear !== String(currentYear)) {
+//     console.warn(
+//       `The previous year (${prevYear}) does not match the current year (${currentYear}). The sequence will continue with the new year.`,
+//     );
+//   }
+
+//   // 2. Convert to number and increment.
+//   const nextNumber = parseInt(numericPart, 10) + 1;
+//   const paddingLength = numericPart.length;
+
+//   // 3. Pad the new number with leading zeros to match the original length.
+//   const nextNumericPart = String(nextNumber).padStart(paddingLength, '0');
+
+//   // 4. Combine the year with the new padded number.
+//   const nextRequestNumber = `${currentYear}-${nextNumericPart}`;
+
+//   return nextRequestNumber;
+// }
 
 // The `validateAzureToken` and `token` parameter are no longer needed.
 export async function createFuelRequest(
   prevState: FormAndActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormAndActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'TRANSPORT_FOCAL') {
@@ -135,7 +175,7 @@ export async function createFuelRequest(
   }
 
   const validatedFields = createRequestSchema.safeParse(
-    Object.fromEntries(formData.entries())
+    Object.fromEntries(formData.entries()),
   );
 
   if (!validatedFields.success) {
@@ -222,12 +262,12 @@ export async function createFuelRequest(
     redirect(`/transport?toast=error&message=${errorMessage}`);
   }
   redirect(
-    `/transport?toast=success&message=Fuel request submitted successfully!.`
+    `/transport?toast=success&message=Fuel request submitted successfully!.`,
   );
 }
 export async function updateRequestStatus(
   prevState: FormState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'STORE_ATTENDANT') {
@@ -240,7 +280,7 @@ export async function updateRequestStatus(
   }
 
   const validatedFields = updateRequestStatusSchema.safeParse(
-    Object.fromEntries(formData.entries())
+    Object.fromEntries(formData.entries()),
   );
 
   if (!validatedFields.success) {
@@ -268,7 +308,7 @@ export async function updateRequestStatus(
       // Check if any coupons have already been delivered
       if (fuelRequest._count.couponDeliveries > 0) {
         throw new Error(
-          'Coupons have already been delivered for this request.'
+          'Coupons have already been delivered for this request.',
         );
       }
 
@@ -286,7 +326,7 @@ export async function updateRequestStatus(
 
       if (availableCoupons.length < quantity) {
         throw new Error(
-          `Insufficient coupons available. Requested: ${quantity}, Available: ${availableCoupons.length}`
+          `Insufficient coupons available. Requested: ${quantity}, Available: ${availableCoupons.length}`,
         );
       }
 
@@ -298,12 +338,12 @@ export async function updateRequestStatus(
 
       const totalCouponValue = availableCoupons.reduce(
         (sum, coupon) => sum + coupon.priceValue,
-        0
+        0,
       );
 
       if (balance.currentAmount < totalCouponValue) {
         throw new Error(
-          'Insufficient funds in the system balance to issue coupons.'
+          'Insufficient funds in the system balance to issue coupons.',
         );
       }
 
@@ -354,7 +394,7 @@ export async function updateRequestStatus(
 
     revalidatePath('/store');
     redirect(
-      `/store?toast=success&message=Request #${updatedRequest.requestNumber} approved with coupons.`
+      `/store?toast=success&message=Request #${updatedRequest.requestNumber} approved with coupons.`,
     );
   } catch (e: unknown) {
     let errorMessage = 'An unexpected error occurred.';
@@ -398,7 +438,7 @@ export async function getFuelRequestById(requestId: number) {
 export async function updateFuelRequest(
   requestId: number,
   initialState: FormAndActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormAndActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'TRANSPORT_FOCAL') {
@@ -476,7 +516,7 @@ export async function updateFuelRequest(
 }
 export async function deleteFuelRequest(
   initialState: FormAndActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormAndActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'TRANSPORT_FOCAL') {
