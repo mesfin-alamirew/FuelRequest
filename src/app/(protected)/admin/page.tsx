@@ -3,10 +3,25 @@
 import { PrismaClient } from '@prisma/client';
 import BalanceTopUpForm from './BalanceTopUpForm';
 import Link from 'next/link';
+import { getAuthSession } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
 export default async function AdminPage() {
+  const session = await getAuthSession();
+
+  if (!session || session.role !== 'ADMIN') {
+    return (
+      <main className="p-8 max-w-6xl mx-auto">
+        <h1 className="text-base font-medium text-gray-800 dark:text-white/90 ">
+          Access Denied
+        </h1>
+        <p className="mb-6 mt-10 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
+          You do not have permission to view this page.
+        </p>
+      </main>
+    );
+  }
   const balance = await prisma.balance.findUnique({ where: { id: 1 } });
 
   if (!balance) {

@@ -44,7 +44,7 @@ export default async function HomePage() {
                     className="absolute inset-x-1 h-10 p-2 bottom-1  bg-blue-600 text-white text-center rounded-md"
                     href="/store"
                   >
-                    Create Request
+                    Offer Coupon
                   </Link>
                 </div>
               </div>
