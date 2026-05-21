@@ -57,7 +57,7 @@ const exportFiltersSchema = z.object({
 });
 
 export async function exportReportToCsv(
-  filters: z.infer<typeof exportFiltersSchema>
+  filters: z.infer<typeof exportFiltersSchema>,
 ) {
   const session = await getAuthSession();
   if (!session || session.role !== 'ADMIN') {
@@ -120,7 +120,7 @@ export async function exportReportToCsv(
 }
 export async function topUpBalance(
   prevState: FormState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'ADMIN') {
@@ -133,7 +133,7 @@ export async function topUpBalance(
   }
 
   const validatedFields = topUpSchema.safeParse(
-    Object.fromEntries(formData.entries())
+    Object.fromEntries(formData.entries()),
   );
 
   if (!validatedFields.success) {
@@ -184,7 +184,7 @@ export async function topUpBalance(
 export async function fetchCoupons(
   query: string = '',
   page: number = 1,
-  pageSize: number = 10
+  pageSize: number = 10,
 ) {
   const session = await getAuthSession();
   if (
@@ -370,7 +370,7 @@ export async function getCouponById(id: number) {
 export async function updateCoupon(
   id: number,
   initialState: unknown,
-  formData: FormData
+  formData: FormData,
 ) {
   const session = await getAuthSession();
   if (!session || session.role !== 'ADMIN') {
@@ -460,7 +460,7 @@ export async function createDepartment(formData: FormData) {
  */
 export async function updateDepartment(
   departmentId: number,
-  formData: FormData
+  formData: FormData,
 ) {
   const session = await getAuthSession();
   if (!session || session.role !== 'ADMIN') {
@@ -615,7 +615,7 @@ export async function fetchVehicles(query: string = '') {
   }
 
   const fuelTypeQuery = Object.values(FuelTypeEnum).includes(
-    query as FuelTypeEnum
+    query as FuelTypeEnum,
   )
     ? (query as FuelTypeEnum)
     : undefined;
@@ -751,6 +751,102 @@ export async function fetchDrivers(query: string = '') {
     orderBy: { name: 'asc' },
   });
 }
+/*
+ * Create fuel price records. This function can be expanded to include more complex logic, such as validating the new price against certain rules or updating related records.
+ */
+export async function createFuelPrice(formData: FormData) {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+  const fuelType = formData.get('fuelType') as FuelTypeEnum;
+  const pricePerLiter = parseFloat(formData.get('pricePerLiter') as string);
+
+  if (!Object.values(FuelTypeEnum).includes(fuelType) || isNaN(pricePerLiter)) {
+    throw new Error('Invalid input for fuel price creation.');
+  }
+
+  try {
+    await prisma.fuelPrice.create({
+      data: { type: fuelType, price: pricePerLiter },
+    });
+    revalidatePath('/admin/manage-fuel-prices');
+  } catch (error: unknown) {
+    throw new Error('Failed to create fuel price.');
+  }
+}
+
+/*
+ * Update fuel prices for a vehicle.
+ * This function can be expanded to include more complex logic, such as validating the new price against certain rules or updating related records.
+ */
+export async function updateFuelPrice(fuelPriceId: number, formData: FormData) {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+  const fuelType = formData.get('fuelType') as FuelTypeEnum;
+  const price = parseFloat(formData.get('price') as string);
+
+  console.log('VALUES:', { fuelType, price });
+
+  if (!Object.values(FuelTypeEnum).includes(fuelType) || isNaN(price)) {
+    throw new Error('Invalid input for fuel price update.');
+  }
+
+  try {
+    await prisma.fuelPrice.update({
+      where: { id: fuelPriceId },
+      data: { type: fuelType, price: price },
+    });
+    revalidatePath('/admin/manage-fuel-prices');
+  } catch (error: unknown) {
+    throw new Error('Failed to update fuel price.');
+  }
+}
+
+/**
+ * Deletes a fuel price record. This function can be expanded to include logic to prevent deletion if there are related records that depend on this fuel price.
+ */
+export async function deleteFuelPrice(fuelPriceId: number) {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  try {
+    // Implement logic to handle related records (e.g., prevent deletion if fuel price is referenced in fuel requests)
+    await prisma.fuelPrice.delete({ where: { id: fuelPriceId } });
+    revalidatePath('/admin/manage-fuel-prices');
+  } catch (error) {
+    throw new Error('Failed to delete fuel price.');
+  }
+}
+/*
+ * fetch fuel prices based on a query.
+ */
+export async function fetchFuelPrices(query: string = '') {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  return prisma.fuelPrice.findMany({
+    where: {
+      type: {
+        contains: query,
+        mode: 'insensitive',
+      },
+    },
+  });
+}
+
+/**
+ * Fetches the current fuel prices for all fuel types. This function can be used to display the current prices on the admin page or to populate a form for updating prices.
+
+
+
+
 /**
  * Creates a new driver.
  */
@@ -883,7 +979,7 @@ export async function getPendingFuelRequestsAdmin() {
 
 export async function approveRequest(
   initialState: ActionState,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'ADMIN') {
@@ -910,7 +1006,7 @@ export async function approveRequest(
 
 export async function rejectRequest(
   initialState: unknown,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionState> {
   const session = await getAuthSession();
   if (!session || session.role !== 'ADMIN') {

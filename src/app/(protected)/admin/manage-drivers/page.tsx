@@ -12,7 +12,8 @@ export default async function ManageDriversPage({
 }: {
   searchParams?: { query?: string };
 }) {
-  const query = searchParams?.query || '';
+  const params = await searchParams;
+  const query = params?.query || '';
   const drivers = await fetchDrivers(query);
 
   return (

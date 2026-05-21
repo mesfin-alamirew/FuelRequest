@@ -19,7 +19,7 @@ export default async function CouponsPage({
   const { coupons, totalPages } = await fetchCoupons(
     searchQuery,
     currentPage,
-    couponsPerPage
+    couponsPerPage,
   );
 
   // Create a unique key that changes with the search query

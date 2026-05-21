@@ -10,6 +10,7 @@ import {
   CircleQuestionMark,
   Ellipsis,
   FileQuestionIcon,
+  FuelIcon,
   GridIcon,
   ListIcon,
   User2Icon,
@@ -71,6 +72,12 @@ const navItems: NavItem[] = [
     roles: ['ADMIN'],
 
     // subItems: [{ name: 'Form Elements', path: '/form-elements', pro: false }],
+  },
+  {
+    icon: <FuelIcon />,
+    name: 'Fuel Price',
+    path: '/admin/manage-fuel-prices',
+    roles: ['ADMIN'],
   },
   {
     icon: <User2Icon />,
@@ -135,7 +142,7 @@ const Sidebar: React.FC = () => {
   const { session } = useSession();
   const renderMenuItems = (
     navItems: NavItem[],
-    menuType: 'main' | 'others'
+    menuType: 'main' | 'others',
   ) => (
     <ul className="flex flex-col gap-4">
       {navItems.map((nav, index) => (
@@ -265,7 +272,7 @@ const Sidebar: React.FC = () => {
     index: number;
   } | null>(null);
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
-    {}
+    {},
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -331,8 +338,8 @@ const Sidebar: React.FC = () => {
           isExpanded || isMobileOpen
             ? 'w-[290px]'
             : isHovered
-            ? 'w-[290px]'
-            : 'w-[90px]'
+              ? 'w-[290px]'
+              : 'w-[90px]'
         }
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0`}
