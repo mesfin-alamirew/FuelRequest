@@ -11,8 +11,10 @@ import {
   Ellipsis,
   FileQuestionIcon,
   FuelIcon,
+  GiftIcon,
   GridIcon,
   ListIcon,
+  Receipt,
   User2Icon,
   UserCircleIcon,
 } from 'lucide-react';
@@ -53,13 +55,13 @@ const navItems: NavItem[] = [
     roles: ['ADMIN'],
   },
   {
-    icon: <ListIcon />,
+    icon: <GiftIcon />,
     name: 'Coupons',
     path: '/admin/manage-coupons',
     roles: ['ADMIN', 'STORE_ATTENDANT'],
   },
   {
-    icon: <ListIcon />,
+    icon: <Receipt />,
     name: 'Coupon Values',
     path: '/admin/manage-coupon-value',
     roles: ['ADMIN'],
