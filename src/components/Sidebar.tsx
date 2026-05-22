@@ -59,6 +59,12 @@ const navItems: NavItem[] = [
     roles: ['ADMIN', 'STORE_ATTENDANT'],
   },
   {
+    icon: <ListIcon />,
+    name: 'Coupon Values',
+    path: '/admin/manage-coupon-value',
+    roles: ['ADMIN'],
+  },
+  {
     icon: <GridIcon />,
     name: 'Offer Coupon',
     path: '/store',

@@ -15,6 +15,7 @@ import { revalidatePath } from 'next/cache';
 import { getAuthSession } from '@/lib/auth';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { redirect } from 'next/navigation';
+import { id } from 'zod/locales';
 
 const prisma = new PrismaClient();
 
@@ -429,6 +430,32 @@ export async function deleteCoupon(couponId: number) {
     throw new Error('Failed to delete coupon.');
   }
 }
+/**
+ * updates a coupon value.
+ */
+export async function updateCouponValue(
+  couponValueId: number,
+  formData: FormData,
+) {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+  const value = formData.get('value') as string;
+  if (!value) throw new Error('Coupon value is required.');
+  try {
+    await prisma.couponValue.update({
+      where: { id: couponValueId },
+      data: { value: parseInt(value, 10) },
+    });
+    revalidatePath('/admin/manage-coupons');
+  } catch (error: unknown) {
+    console.error('Failed to update coupon value:', error);
+    throw new Error(
+      'Failed to update coupon value due to an unexpected error.',
+    );
+  }
+}
 
 /**
  * Creates a new department.
@@ -732,6 +759,16 @@ export async function deleteVehicle(vehicleId: number) {
   } catch (error) {
     throw new Error('Failed to delete vehicle.');
   }
+}
+/*
+ *fetch coupon values.
+ */
+export async function fetchCouponValues() {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+  return prisma.couponValue.findMany();
 }
 /**
  * Fetches vehicles with optional search.
