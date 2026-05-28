@@ -67,7 +67,7 @@ export default async function DashboardPage() {
                 {pendingRequests}
               </h3>
               <p className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                Pending Requests
+                Admin Pending Requests
                 {/* <span className="bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500 inline-flex items-center justify-center gap-1 rounded-full px-2.5 py-0.5 text-sm font-medium">
                   +20%
                 </span> */}

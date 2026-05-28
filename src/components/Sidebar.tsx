@@ -165,7 +165,7 @@ const Sidebar: React.FC = () => {
     navItems: NavItem[],
     menuType: 'main' | 'others',
   ) => (
-    <ul className="flex flex-col gap-4">
+    <ul className="flex flex-col gap-2">
       {navItems.map((nav, index) => (
         <li key={nav.name}>
           {nav.subItems ? (
@@ -385,7 +385,7 @@ const Sidebar: React.FC = () => {
       </div>
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <div>
               {/* <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${

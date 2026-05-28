@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import { useSidebar } from '@/providers/SidebarContext';
 import Sidebar from '@/components/Sidebar';
 import Backdrop from '@/components/Backdrop';
