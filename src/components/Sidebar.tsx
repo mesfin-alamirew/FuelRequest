@@ -357,9 +357,9 @@ const Sidebar: React.FC = () => {
       className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${
           isExpanded || isMobileOpen
-            ? 'w-[290px]'
+            ? 'w-[260px]'
             : isHovered
-              ? 'w-[290px]'
+              ? 'w-[260px]'
               : 'w-[90px]'
         }
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -375,11 +375,11 @@ const Sidebar: React.FC = () => {
         <Link href="/dashboard">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
-              <CarIcon className="dark:hidden w-[150px] h-[40px]" />
-              <CarIcon className="hidden dark:block w-[150px] h-[40px] text-white" />
+              <FuelIcon className="dark:hidden w-[150px] h-[40px]" />
+              <FuelIcon className="hidden dark:block w-[150px] h-[40px] text-white" />
             </>
           ) : (
-            <CarIcon className="w-[32px] h-[32px]  text-white" />
+            <FuelIcon className="w-[32px] h-[32px]  text-white" />
           )}
         </Link>
       </div>
