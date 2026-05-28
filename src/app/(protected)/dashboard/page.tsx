@@ -5,7 +5,12 @@ import { redirect } from 'next/navigation';
 import TinyBarChart from './TinyBarChart';
 import SimpleLineChart from './SimpleLineChart';
 import Link from 'next/link';
-import { getPendingFuelRequestsAdmin } from '@/lib/actions/admin';
+import {
+  countPendingRequests,
+  countAllRequests,
+  countAllDrivers,
+  countAllVehicles,
+} from '@/lib/actions/admin';
 
 export default async function DashboardPage() {
   // Await the function call to get the session object
@@ -15,7 +20,10 @@ export default async function DashboardPage() {
   if (!session) {
     redirect('/');
   }
-  const pendingRequests = await getPendingFuelRequestsAdmin();
+  const pendingRequests = await countPendingRequests();
+  const allRequests = await countAllRequests();
+  const allVehicles = await countAllVehicles();
+  const allDrivers = await countAllDrivers();
   if (!session || session.role !== 'ADMIN') {
     return (
       <main className="p-8 max-w-6xl mx-auto">
@@ -33,37 +41,10 @@ export default async function DashboardPage() {
     <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
       <div className="space-y-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <article className="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white/90">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
-                fill="none"
-                className="h-7 w-7"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M14 24.59v-.004m0-11.718v11.718m-4.935-8.22v-5.758m9.87-4.933-9.868 4.933M23.591 8.28c.178.277.277.603.277.944v9.554a1.75 1.75 0 0 1-.967 1.565l-8.118 4.058a1.75 1.75 0 0 1-.783.185M23.591 8.28l-8.808 4.404a1.75 1.75 0 0 1-1.565 0L4.41 8.28m19.181 0a1.75 1.75 0 0 0-.69-.621L14.783 3.6a1.75 1.75 0 0 0-1.565 0L5.101 7.66c-.287.144-.524.36-.69.62m0 0a1.75 1.75 0 0 0-.277.945v9.554c0 .663.374 1.269.967 1.565l8.117 4.058c.246.124.514.185.782.185"
-                ></path>
-              </svg>
-            </div>
-            <Link href="/admin/requests" className="cursor-pointer">
-              <h3 className="text-2xl font-semibold text-gray-800 dark:text-white/90">
-                {pendingRequests.length}
-              </h3>
-              <p className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
-                Pending Requests
-                <span className="bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500 inline-flex items-center justify-center gap-1 rounded-full px-2.5 py-0.5 text-sm font-medium">
-                  +20%
-                </span>
-              </p>
-            </Link>
-          </article>
-          <article className="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3">
+          <Link
+            href="/admin/requests"
+            className="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3"
+          >
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white/90">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +64,40 @@ export default async function DashboardPage() {
             </div>
             <div>
               <h3 className="text-2xl font-semibold text-gray-800 dark:text-white/90">
-                12,384
+                {pendingRequests}
+              </h3>
+              <p className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
+                Pending Requests
+                <span className="bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500 inline-flex items-center justify-center gap-1 rounded-full px-2.5 py-0.5 text-sm font-medium">
+                  +20%
+                </span>
+              </p>
+            </div>
+          </Link>
+          <Link
+            href="/admin/request-report"
+            className="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3"
+          >
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white/90">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="28"
+                height="28"
+                fill="none"
+                className="h-7 w-7"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+                  d="M14 24.59v-.004m0-11.718v11.718m-4.935-8.22v-5.758m9.87-4.933-9.868 4.933M23.591 8.28c.178.277.277.603.277.944v9.554a1.75 1.75 0 0 1-.967 1.565l-8.118 4.058a1.75 1.75 0 0 1-.783.185M23.591 8.28l-8.808 4.404a1.75 1.75 0 0 1-1.565 0L4.41 8.28m19.181 0a1.75 1.75 0 0 0-.69-.621L14.783 3.6a1.75 1.75 0 0 0-1.565 0L5.101 7.66c-.287.144-.524.36-.69.62m0 0a1.75 1.75 0 0 0-.277.945v9.554c0 .663.374 1.269.967 1.565l8.117 4.058c.246.124.514.185.782.185"
+                ></path>
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-2xl font-semibold text-gray-800 dark:text-white/90">
+                {allRequests}
               </h3>
               <p className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
                 All Requests
@@ -92,8 +106,11 @@ export default async function DashboardPage() {
                 </span>
               </p>
             </div>
-          </article>
-          <article className="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3">
+          </Link>
+          <Link
+            href="/admin/manage-vehicles"
+            className="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3"
+          >
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white/90">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +130,7 @@ export default async function DashboardPage() {
             </div>
             <div>
               <h3 className="text-2xl font-semibold text-gray-800 dark:text-white/90">
-                728
+                {allVehicles}
               </h3>
               <p className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
                 Vehicles
@@ -122,8 +139,11 @@ export default async function DashboardPage() {
                 </span>
               </p>
             </div>
-          </article>
-          <article className="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3">
+          </Link>
+          <Link
+            href="/admin/manage-drivers"
+            className="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3"
+          >
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white/90">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -143,7 +163,7 @@ export default async function DashboardPage() {
             </div>
             <div>
               <h3 className="text-2xl font-semibold text-gray-800 dark:text-white/90">
-                12,384
+                {allDrivers}
               </h3>
               <p className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
                 Drivers
@@ -152,7 +172,7 @@ export default async function DashboardPage() {
                 </span>
               </p>
             </div>
-          </article>
+          </Link>
         </div>
       </div>
       {/* <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 mt-10"> */}

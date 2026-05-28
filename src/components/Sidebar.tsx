@@ -49,6 +49,12 @@ const navItems: NavItem[] = [
     roles: ['ADMIN'],
   },
   {
+    icon: <ListIcon />,
+    name: 'All Requests',
+    path: '/admin/request-report',
+    roles: ['ADMIN'],
+  },
+  {
     icon: <UserCircleIcon />,
     name: 'Users',
     path: '/admin/manage-users',

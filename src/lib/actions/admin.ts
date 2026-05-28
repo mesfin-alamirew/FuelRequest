@@ -1013,6 +1013,44 @@ export async function getPendingFuelRequestsAdmin() {
   });
 }
 
+export async function countPendingRequests() {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const pendingRequests = await prisma.fuelRequest.findMany({
+    where: { status: 'PENDING_ADMIN' },
+  });
+  return pendingRequests.length;
+}
+export async function countAllRequests() {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const allRequests = await prisma.fuelRequest.findMany();
+  return allRequests.length;
+}
+export async function countAllVehicles() {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const allVehicles = await prisma.vehicle.findMany();
+  return allVehicles.length;
+}
+export async function countAllDrivers() {
+  const session = await getAuthSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const allDrivers = await prisma.driver.findMany();
+  return allDrivers.length;
+}
 export async function approveRequest(
   initialState: ActionState,
   formData: FormData,
