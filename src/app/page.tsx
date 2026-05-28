@@ -58,7 +58,7 @@ export default async function HomePage() {
                   </p>
                   <Link
                     className="absolute inset-x-1 h-10 p-2 bottom-1  bg-blue-600 text-white text-center rounded-md"
-                    href="/admin"
+                    href="/dashboard"
                   >
                     Admin
                   </Link>

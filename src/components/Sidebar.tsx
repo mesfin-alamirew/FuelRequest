@@ -8,7 +8,6 @@ import {
   ChartBar,
   ChevronDownIcon,
   CircleQuestionMark,
-  Ellipsis,
   FileQuestionIcon,
   FuelIcon,
   GiftIcon,
@@ -36,10 +35,17 @@ const navItems: NavItem[] = [
     path: '/transport',
     roles: ['TRANSPORT_FOCAL'],
   },
+
   {
     icon: <GridIcon />,
     name: 'Dashboard',
     path: '/dashboard',
+    roles: ['ADMIN'],
+  },
+  {
+    icon: <Receipt />,
+    name: 'Balance',
+    path: '/admin',
     roles: ['ADMIN'],
   },
   {
@@ -54,6 +60,7 @@ const navItems: NavItem[] = [
     path: '/admin/manage-departments',
     roles: ['ADMIN'],
   },
+
   {
     icon: <GiftIcon />,
     name: 'Coupons',

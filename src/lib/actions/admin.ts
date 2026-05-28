@@ -15,7 +15,6 @@ import { revalidatePath } from 'next/cache';
 import { getAuthSession } from '@/lib/auth';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { redirect } from 'next/navigation';
-import { id } from 'zod/locales';
 
 const prisma = new PrismaClient();
 
@@ -32,10 +31,10 @@ export interface FormState {
   };
 }
 
-const initialState: FormState = {
-  message: '',
-  errors: {},
-};
+// const initialState: FormState = {
+//   message: '',
+//   errors: {},
+// };
 
 // Define FormState for useActionState (if you're using it for the UI button)
 export type formState = {
@@ -426,8 +425,8 @@ export async function deleteCoupon(couponId: number) {
   try {
     await prisma.coupon.delete({ where: { id: couponId } });
     revalidatePath('/admin/manage-coupons');
-  } catch (error) {
-    throw new Error('Failed to delete coupon.');
+  } catch (error: unknown) {
+    throw new Error((error as string) || 'Failed to delete coupon.');
   }
 }
 /**
@@ -525,8 +524,8 @@ export async function deleteDepartment(departmentId: number) {
     // Before deleting a department, you might want to handle dependent records (e.g., set foreign key to null).
     await prisma.department.delete({ where: { id: departmentId } });
     revalidatePath('/admin/manage-departments');
-  } catch (error) {
-    throw new Error('Failed to delete department.');
+  } catch (error: unknown) {
+    throw new Error((error as string) || 'Failed to delete department.');
   }
 }
 
@@ -627,8 +626,8 @@ export async function deleteUser(userId: number) {
   try {
     await prisma.user.delete({ where: { id: userId } });
     revalidatePath('/admin/manage-users');
-  } catch (error) {
-    throw new Error('Failed to delete user.');
+  } catch (error: unknown) {
+    throw new Error((error as string) || 'Failed to delete user.');
   }
 }
 
@@ -756,8 +755,8 @@ export async function deleteVehicle(vehicleId: number) {
     // Implement logic to handle related FuelRequests (e.g., prevent deletion if requests exist)
     await prisma.vehicle.delete({ where: { id: vehicleId } });
     revalidatePath('/admin/manage-vehicles');
-  } catch (error) {
-    throw new Error('Failed to delete vehicle.');
+  } catch (error: unknown) {
+    throw new Error((error as string) || 'Failed to delete vehicle.');
   }
 }
 /*
@@ -809,7 +808,7 @@ export async function createFuelPrice(formData: FormData) {
     });
     revalidatePath('/admin/manage-fuel-prices');
   } catch (error: unknown) {
-    throw new Error('Failed to create fuel price.');
+    throw new Error((error as string) || 'Failed to create fuel price.');
   }
 }
 
@@ -838,7 +837,7 @@ export async function updateFuelPrice(fuelPriceId: number, formData: FormData) {
     });
     revalidatePath('/admin/manage-fuel-prices');
   } catch (error: unknown) {
-    throw new Error('Failed to update fuel price.');
+    throw new Error((error as string) || 'Failed to update fuel price.');
   }
 }
 
@@ -855,8 +854,8 @@ export async function deleteFuelPrice(fuelPriceId: number) {
     // Implement logic to handle related records (e.g., prevent deletion if fuel price is referenced in fuel requests)
     await prisma.fuelPrice.delete({ where: { id: fuelPriceId } });
     revalidatePath('/admin/manage-fuel-prices');
-  } catch (error) {
-    throw new Error('Failed to delete fuel price.');
+  } catch (error: unknown) {
+    throw new Error((error as string) || 'Failed to delete fuel price.');
   }
 }
 /*
@@ -954,8 +953,8 @@ export async function deleteDriver(driverId: number) {
     // Implement logic to handle related FuelRequests (e.g., prevent deletion if requests exist)
     await prisma.driver.delete({ where: { id: driverId } });
     revalidatePath('/admin/manage-drivers');
-  } catch (error) {
-    throw new Error('Failed to delete driver.');
+  } catch (error: unknown) {
+    throw new Error((error as string) || 'Failed to delete driver.');
   }
 }
 
@@ -1037,6 +1036,7 @@ export async function approveRequest(
     revalidatePath('/store-attendant/requests');
     return { message: `Request ${requestId} approved successfully.` };
   } catch (error) {
+    console.error('Failed to approve request:', error);
     return { message: `Failed to approve request ${requestId}.`, error: true };
   }
 }
@@ -1059,7 +1059,8 @@ export async function rejectRequest(
     revalidatePath('/admin/requests');
     revalidatePath('/dashboard'); // Assuming dashboard shows focal person's requests
     return { message: `Request ${requestId} rejected.`, error: true };
-  } catch (error) {
+  } catch (error: unknown) {
+    console.error('Failed to reject request:', error);
     return { message: `Failed to reject request ${requestId}.`, error: true };
   }
 }

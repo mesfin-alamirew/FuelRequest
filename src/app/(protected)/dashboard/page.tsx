@@ -4,6 +4,8 @@ import { getAuthSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import TinyBarChart from './TinyBarChart';
 import SimpleLineChart from './SimpleLineChart';
+import Link from 'next/link';
+import { getPendingFuelRequestsAdmin } from '@/lib/actions/admin';
 
 export default async function DashboardPage() {
   // Await the function call to get the session object
@@ -13,7 +15,7 @@ export default async function DashboardPage() {
   if (!session) {
     redirect('/');
   }
-
+  const pendingRequests = await getPendingFuelRequestsAdmin();
   if (!session || session.role !== 'ADMIN') {
     return (
       <main className="p-8 max-w-6xl mx-auto">
@@ -49,9 +51,9 @@ export default async function DashboardPage() {
                 ></path>
               </svg>
             </div>
-            <div>
+            <Link href="/admin/requests" className="cursor-pointer">
               <h3 className="text-2xl font-semibold text-gray-800 dark:text-white/90">
-                12,384
+                {pendingRequests.length}
               </h3>
               <p className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
                 Pending Requests
@@ -59,7 +61,7 @@ export default async function DashboardPage() {
                   +20%
                 </span>
               </p>
-            </div>
+            </Link>
           </article>
           <article className="flex items-center gap-5 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-white/3">
             <div className="inline-flex h-16 w-16 items-center justify-center rounded-xl bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-white/90">
