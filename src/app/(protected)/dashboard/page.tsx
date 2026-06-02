@@ -20,10 +20,12 @@ export default async function DashboardPage() {
   if (!session) {
     redirect('/');
   }
+  // Fetch the counts for pending requests, all requests, vehicles, and drivers to display on the dashboard
   const pendingRequests = await countPendingRequests();
   const allRequests = await countAllRequests();
   const allVehicles = await countAllVehicles();
   const allDrivers = await countAllDrivers();
+
   if (!session || session.role !== 'ADMIN') {
     return (
       <main className="p-8 max-w-6xl mx-auto">

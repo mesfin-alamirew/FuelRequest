@@ -95,7 +95,7 @@ export default async function RequestReportPage({
         Fuel Request Report
       </h2>
       <div className="mb-6 flex justify-between items-center">
-        <Link href="/admin" className="text-blue-600 hover:underline">
+        <Link href="/dashboard" className="text-blue-600 hover:underline">
           &larr; Back to Admin Dashboard
         </Link>
         <ExportButton />
