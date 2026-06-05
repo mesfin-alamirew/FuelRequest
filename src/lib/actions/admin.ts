@@ -170,7 +170,7 @@ export async function topUpBalance(
 
     revalidatePath('/admin');
     return {
-      message: `Successfully added $${amount.toFixed(2)} to the balance.`,
+      message: `$${amount.toFixed(2)} successfully added to the balance.`,
       errors: {},
     };
   } catch (e: unknown) {
