@@ -12,7 +12,7 @@ const initialState: FormState = {
 export default function BalanceTopUpForm() {
   const [state, formAction, isPending] = useActionState(
     topUpBalance,
-    initialState
+    initialState,
   );
 
   return (
@@ -47,7 +47,7 @@ export default function BalanceTopUpForm() {
       {state.message && (
         <p
           className={`mt-4 text-sm ${
-            state.errors ? 'text-red-500' : 'text-green-600'
+            state.errors === null ? 'text-red-500' : 'text-green-600'
           }`}
         >
           {state.message}
