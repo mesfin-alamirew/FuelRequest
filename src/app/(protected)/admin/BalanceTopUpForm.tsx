@@ -47,7 +47,7 @@ export default function BalanceTopUpForm() {
       {state.message && (
         <p
           className={`mt-4 text-sm ${
-            state.errors === null ? 'text-red-500' : 'text-green-600'
+            !state.errors ? 'text-red-500' : 'text-green-600'
           }`}
         >
           {state.message}
